@@ -1,0 +1,57 @@
+{
+  "name": "@meshydb/sdk",
+  "version": "1.0.0",
+  "description": "NodeJS integration with MeshyDb",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json",
+    "build": "run-s _clear _cleardist _makedeclaration _copydeclaration _cleardist _rollup",
+    "_rollup": "rollup -c",
+    "_clear": "rimraf lib",
+    "_cleardist": "rimraf dist",
+    "_tsc": "tsc",
+    "_make-bundle": "node build/make-bundle",
+    "_makedeclaration": "tsc --emitDeclarationOnly",
+    "_copydeclaration": "node build/copydeclaration"
+  },
+  "keywords": [
+    "meshy",
+    "meshydb",
+    "baas",
+    "backend-as-a-service",
+    "nosql",
+    "backend",
+    "json"
+  ],
+  "author": "Chris Pluta",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yetisoftworks/MeshyDb.SDK-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yetisoftworks/MeshyDb.SDK-js/issues"
+  },
+  "homepage": "https://github.com/yetisoftworks/MeshyDb.SDK-js#readme",
+  "devDependencies": {
+    "@types/superagent": "4.1.1",
+    "@types/uuid": "3.4.4",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.17.1",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.12.4",
+    "rollup-plugin-typescript3": "^1.1.2",
+    "tslib": "^1.9.3",
+    "tslint": "^5.16.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.5.1",
+    "rollup-plugin-uglify": "^6.0.2"
+  },
+  "dependencies": {
+    "localstorage-ponyfill": "^1.0.2",
+    "superagent": "^5.0.5",
+    "uuid": "3.3.2"
+  }
+}
