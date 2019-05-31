@@ -1,33 +1,21 @@
-import * as superagent from 'superagent';
-import { IMeshData, IMeshesService, PageResult } from '..';
-import { Constants } from '../models/Constants';
-import { TokenService } from './TokenService';
+import { IMeshData, IMeshesService, IPageResult } from '..';
+import { MeshyRequest } from '../models/MeshyRequest';
+import { RequestService } from './RequestService';
 import { Utils } from './Utils';
 
 export class MeshesService implements IMeshesService {
   private authenticationId: string;
-  private constants: Constants;
-  private tokenService: TokenService;
-  constructor(authId: string, constants: Constants, tokenService: TokenService) {
+  private requestService: RequestService;
+  constructor(authId: string, requestService: RequestService) {
     this.authenticationId = authId;
-    this.constants = constants;
-    this.tokenService = tokenService;
+    this.requestService = requestService;
   }
   public get = <T extends IMeshData>(meshName: string, id: string) => {
     return new Promise<T>((resolve, reject) => {
-      this.tokenService.getAccessToken(this.authenticationId).then(accessToken => {
-        superagent
-          .get(`${this.constants.apiUrl}/meshes/${meshName}/${id}`)
-          .set('tenant', this.constants.tenant)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .end((err, resp) => {
-            if (!resp.ok) {
-              reject(err);
-              return;
-            }
-            resolve(resp.body);
-          });
-      });
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = `meshes/${meshName}/${id}`;
+      request.configureCallback(resolve, reject);
     });
   };
   public search = <T extends IMeshData>(
@@ -47,101 +35,72 @@ export class MeshesService implements IMeshesService {
     };
     query.pageNumber = query.pageNumber || 1;
     query.pageSize = query.pageSize || 25;
-    return new Promise<PageResult<T>>((resolve, reject) => {
-      this.tokenService.getAccessToken(this.authenticationId).then(accessToken => {
-        let request = superagent
-          .get(`${this.constants.apiUrl}/meshes/${meshName}`)
-          .set('tenant', this.constants.tenant)
-          .set('Authorization', `Bearer ${accessToken}`);
-        const queryData: any = query;
-        if (queryData) {
-          for (const key of Object.keys(queryData)) {
-            request = request.query(`${key}=${encodeURIComponent(JSON.stringify(queryData[key]))}`);
-          }
-        }
-        request.end((err, resp) => {
-          if (!resp.ok) {
-            reject(err);
-            return;
-          }
-          resolve(resp.body);
-        });
-      });
+    return new Promise<IPageResult<T>>((resolve, reject) => {
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = `meshes/${meshName}`;
+      request.queryData = query;
+      request.configureCallback(resolve, reject);
+
+      this.requestService.sendRequest(request);
     });
   };
   public create = <T extends IMeshData>(meshName: string, data: T) => {
     return new Promise<T>((resolve, reject) => {
-      this.tokenService.getAccessToken(this.authenticationId).then(accessToken => {
-        const dataClone = JSON.parse(JSON.stringify(data), Utils.jsonReviver);
-        delete dataClone._id;
-        superagent
-          .post(`${this.constants.apiUrl}/meshes/${meshName}`)
-          .set('tenant', this.constants.tenant)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .send(dataClone)
-          .end((err, resp) => {
-            if (!resp.ok) {
-              reject(err);
-              return;
-            }
-            resolve(resp.body);
-          });
-      });
+      const dataClone = JSON.parse(JSON.stringify(data), Utils.jsonReviver);
+      delete dataClone._id;
+
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = `meshes/${meshName}`;
+      request.configureCallback(resolve, reject);
+      request.method = RequestService.POST;
+      request.data = dataClone;
+
+      this.requestService.sendRequest(request);
     });
   };
   public update = <T extends IMeshData>(meshName: string, data: T, id?: string) => {
     return new Promise<T>((resolve, reject) => {
-      this.tokenService.getAccessToken(this.authenticationId).then(accessToken => {
-        id = id || data._id;
-        const dataClone = JSON.parse(JSON.stringify(data), Utils.jsonReviver);
-        delete dataClone._id;
-        superagent
-          .put(`${this.constants.apiUrl}/meshes/${meshName}/${id}`)
-          .set('tenant', this.constants.tenant)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .send(dataClone)
-          .end((err, resp) => {
-            if (!resp.ok) {
-              reject(err);
-              return;
-            }
-            resolve(resp.body);
-          });
-      });
+      id = id || data._id;
+
+      if (!id) {
+        throw new Error('Missing parameter: id');
+      }
+
+      const dataClone = JSON.parse(JSON.stringify(data), Utils.jsonReviver);
+      delete dataClone._id;
+
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = `meshes/${meshName}/${id}`;
+      request.configureCallback(resolve, reject);
+      request.method = RequestService.PUT;
+      request.data = dataClone;
+
+      this.requestService.sendRequest(request);
     });
   };
   public delete = (meshName: string, id: string) => {
     return new Promise<void>((resolve, reject) => {
-      this.tokenService.getAccessToken(this.authenticationId).then(accessToken => {
-        superagent
-          .delete(`${this.constants.apiUrl}/meshes/${meshName}/${id}`)
-          .set('tenant', this.constants.tenant)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .end((err, resp) => {
-            if (!resp.ok) {
-              reject(err);
-              return;
-            }
-            resolve();
-          });
-      });
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = `meshes/${meshName}/${id}`;
+      request.configureCallback(resolve, reject);
+      request.method = RequestService.DELETE;
+
+      this.requestService.sendRequest(request);
     });
   };
   public deleteCollection = (meshName: string) => {
     return new Promise<void>((resolve, reject) => {
-      this.tokenService.getAccessToken(this.authenticationId).then(accessToken => {
-        superagent
-          .delete(`${this.constants.apiUrl}/meshes/${meshName}`)
-          .set('tenant', this.constants.tenant)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .end((err, resp) => {
-            if (!resp.ok) {
-              reject(err);
-              return;
-            }
-            resolve();
-          });
-      });
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = `meshes/${meshName}`;
+      request.configureCallback(resolve, reject);
+      request.method = RequestService.DELETE;
+
+      this.requestService.sendRequest(request);
     });
   };
 }

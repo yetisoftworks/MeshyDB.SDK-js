@@ -1,16 +1,16 @@
-import * as superagent from 'superagent';
 import { v4 as guid } from 'uuid';
-import { Constants } from '../models/Constants';
-import { TokenCacheData } from '../models/TokenCacheData';
-import { TokenRequest } from '../models/TokenRequest';
-import { TokenResponse } from '../models/TokenResponse';
-import { TokenRevocation } from '../models/TokenRevocation';
+import { Constants, MeshyRequest, TokenCacheData, TokenRequest, TokenResponse, TokenRevocation } from '../models';
+import { RequestService } from './RequestService';
 import { Utils } from './Utils';
+
 export class TokenService {
   private storage: any = {};
   private constants: Constants;
+  private requestService: RequestService;
+
   constructor(constants: Constants) {
     this.constants = constants;
+    this.requestService = new RequestService(constants);
   }
   public generateAccessToken = (username: string, password: string) => {
     return new Promise<string>((resolve, reject) => {
@@ -18,20 +18,24 @@ export class TokenService {
       data.client_id = this.constants.publicKey;
       data.username = username;
       data.password = password;
-      superagent
-        .post(`${this.constants.authUrl}/connect/token`)
-        .type('form')
-        .set('tenant', this.constants.tenant)
-        .send(data)
-        .end((err, res) => {
-          if (!res.ok) {
-            reject(err);
-            return;
-          }
-          const authenticationId = guid();
-          this.setCacheData(authenticationId, this.convertToCacheData(res.body));
-          resolve(authenticationId);
-        });
+
+      const request = new MeshyRequest();
+      request.method = RequestService.POST;
+      request.source = RequestService.Auth;
+      request.data = data;
+      request.path = 'connect/token';
+      request.type = RequestService.Form;
+      request.callback = (err, res) => {
+        if (!res.ok) {
+          reject(err);
+          return;
+        }
+        const authenticationId = guid();
+        this.setCacheData(authenticationId, this.convertToCacheData(res.body));
+        resolve(authenticationId);
+      };
+
+      this.requestService.sendRequest(request);
     });
   };
   public getAccessToken = (authenticationId: string) => {
@@ -45,20 +49,24 @@ export class TokenService {
           refreshData.client_id = this.constants.publicKey;
           refreshData.grant_type = 'refresh_token';
           refreshData.refresh_token = data.refreshToken;
-          superagent
-            .post(`${this.constants.authUrl}/connect/token`)
-            .type('form')
-            .set('tenant', this.constants.tenant)
-            .send(refreshData)
-            .end((err, res) => {
-              if (res.ok) {
-                reject(err);
-                return;
-              }
 
-              this.setCacheData(authenticationId, res.body);
-              resolve(res.body.token);
-            });
+          const request = new MeshyRequest();
+          request.method = RequestService.POST;
+          request.source = RequestService.Auth;
+          request.data = refreshData;
+          request.path = 'connect/token';
+          request.type = RequestService.Form;
+          request.callback = (err, res) => {
+            if (res.ok) {
+              reject(err);
+              return;
+            }
+
+            this.setCacheData(authenticationId, res.body);
+            resolve(res.body.token);
+          };
+
+          this.requestService.sendRequest(request);
         }
       } else {
         resolve(null);
@@ -67,23 +75,27 @@ export class TokenService {
   };
   public generateAccessTokenWithRefreshToken = (refreshToken: string) => {
     return new Promise<string>((resolve, reject) => {
-      const request = new TokenRequest();
-      request.client_id = this.constants.publicKey;
-      request.grant_type = 'refresh_token';
-      request.refresh_token = refreshToken;
-      superagent
-        .post(`${this.constants.authUrl}/connect/token`)
-        .type('form')
-        .set('tenant', this.constants.tenant)
-        .send(request)
-        .end((err, res) => {
-          if (!res.ok) {
-            reject(err);
-          }
-          const authId = guid();
-          this.setCacheData(authId, this.convertToCacheData(res.body));
-          resolve(authId);
-        });
+      const tokenRequest = new TokenRequest();
+      tokenRequest.client_id = this.constants.publicKey;
+      tokenRequest.grant_type = 'refresh_token';
+      tokenRequest.refresh_token = refreshToken;
+
+      const request = new MeshyRequest();
+      request.method = RequestService.POST;
+      request.source = RequestService.Auth;
+      request.data = tokenRequest;
+      request.path = 'connect/token';
+      request.type = RequestService.Form;
+      request.callback = (err, res) => {
+        if (!res.ok) {
+          reject(err);
+        }
+        const authId = guid();
+        this.setCacheData(authId, this.convertToCacheData(res.body));
+        resolve(authId);
+      };
+
+      this.requestService.sendRequest(request);
     });
   };
   public getRefreshToken = (authenticationId: string) => {
@@ -103,19 +115,23 @@ export class TokenService {
       revocation.token = cache.refreshToken;
       revocation.token_type_hint = 'refresh_token';
       revocation.client_id = this.constants.publicKey;
-      superagent
-        .post(`${this.constants.authUrl}/connect/revocation`)
-        .type('form')
-        .set('tenant', this.constants.tenant)
-        .send(revocation)
-        .end((err, res) => {
-          if (!res.ok) {
-            reject(err);
-            return;
-          }
-          this.removeCacheData(authenticationId);
-          resolve();
-        });
+
+      const request = new MeshyRequest();
+      request.method = RequestService.POST;
+      request.source = RequestService.Auth;
+      request.data = revocation;
+      request.path = 'connect/revocation';
+      request.type = RequestService.Form;
+      request.callback = (err, res) => {
+        if (!res.ok) {
+          reject(err);
+          return;
+        }
+        this.removeCacheData(authenticationId);
+        resolve();
+      };
+
+      this.requestService.sendRequest(request);
     });
   };
   private getCacheData = (authenticationId: string) => {

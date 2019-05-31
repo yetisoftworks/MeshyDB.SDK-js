@@ -1,23 +1,19 @@
-import * as superagent from 'superagent';
-import { IMeshesService, IMeshyDbClient, IUsersService } from '..';
-import { Constants } from '../models/Constants';
-import { UserPasswordUpdate } from '../models/UserPasswordUpdate';
-import { MeshesService } from './MeshesService';
-import { TokenService } from './TokenService';
-import { UsersService } from './UsersService';
+import { MeshesService, RequestService, TokenService, UsersService } from '.';
+import { IMeshesService, IMeshyDBClient, IUsersService } from '..';
+import { Constants, MeshyRequest, UserPasswordUpdate } from '../models';
 
-export class MeshyDbClient implements IMeshyDbClient {
+export class MeshyDBClient implements IMeshyDBClient {
   public usersService: IUsersService;
   public meshesService: IMeshesService;
   private authenticationId: string;
-  private constants: Constants;
   private tokenService: TokenService;
+  private requestService: RequestService;
   constructor(authenticationId: string, constants: Constants, tokenService: TokenService) {
     this.authenticationId = authenticationId;
-    this.constants = constants;
     this.tokenService = tokenService;
-    this.usersService = new UsersService(authenticationId, constants, tokenService);
-    this.meshesService = new MeshesService(authenticationId, constants, tokenService);
+    this.requestService = new RequestService(constants, this.tokenService);
+    this.usersService = new UsersService(authenticationId, this.requestService);
+    this.meshesService = new MeshesService(authenticationId, this.requestService);
   }
   public updatePassword = (previousPassword: string, newPassword: string) => {
     if (!previousPassword) {
@@ -30,20 +26,14 @@ export class MeshyDbClient implements IMeshyDbClient {
     updatePassword.previousPassword = previousPassword;
     updatePassword.newPassword = newPassword;
     return new Promise<void>((resolve, reject) => {
-      this.tokenService.getAccessToken(this.authenticationId).then(accessToken => {
-        superagent
-          .post(`${this.constants.apiUrl}/users/me/password`)
-          .set('tenant', this.constants.tenant)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .send(updatePassword)
-          .end((err, resp) => {
-            if (!resp.ok) {
-              reject(err);
-              return;
-            }
-            resolve();
-          });
-      });
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.data = updatePassword;
+      request.path = 'users/me/password';
+      request.method = RequestService.POST;
+      request.configureCallback(resolve, reject);
+
+      this.requestService.sendRequest(request);
     });
   };
   public signout = () => {
@@ -54,19 +44,13 @@ export class MeshyDbClient implements IMeshyDbClient {
   };
   public getMyUserInfo = () => {
     return new Promise<any>((resolve, reject) => {
-      this.tokenService.getAccessToken(this.authenticationId).then(accessToken => {
-        superagent
-          .get(`${this.constants.authUrl}/connect/userinfo`)
-          .set('tenant', this.constants.tenant)
-          .set('Authorization', `Bearer ${accessToken}`)
-          .end((err, resp) => {
-            if (!resp.ok) {
-              reject(err);
-              return;
-            }
-            resolve(resp.body);
-          });
-      });
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = 'connect/userinfo';
+      request.source = RequestService.Auth;
+      request.configureCallback(resolve, reject);
+
+      this.requestService.sendRequest(request);
     });
   };
 }

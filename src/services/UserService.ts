@@ -1,43 +1,34 @@
-import * as superagent from 'superagent';
 import { INewUser, IPasswordResetHash, IUser } from '..';
-import { Constants } from '../models/Constants';
 import { ForgotPassword } from '../models/ForgotPassword';
+import { MeshyRequest } from '../models/MeshyRequest';
 import { ResetPassword } from '../models/ResetPassword';
-import { Utils } from './Utils';
+import { RequestService } from './RequestService';
 
 export class UserService {
-  private constants: Constants;
-  constructor(constants: Constants) {
-    this.constants = constants;
+  private requestService: RequestService;
+  constructor(requestService: RequestService) {
+    this.requestService = requestService;
   }
   public createUser = (newUser: INewUser) => {
     return new Promise<IUser>((resolve, reject) => {
-      superagent
-        .post(`${this.constants.apiUrl}/users`)
-        .send(newUser)
-        .set('tenant', this.constants.tenant)
-        .end((err, resp) => {
-          if (!resp.ok) {
-            reject(err);
-            return;
-          }
-          resolve(resp.body);
-        });
+      const request = new MeshyRequest();
+      request.path = `users`;
+      request.configureCallback(resolve, reject);
+      request.method = RequestService.POST;
+      request.data = newUser;
+
+      this.requestService.sendRequest(request);
     });
   };
   public forgotPassword = (forgotPassword: ForgotPassword) => {
     return new Promise<IPasswordResetHash>((resolve, reject) => {
-      superagent
-        .post(`${this.constants.apiUrl}/users/forgotpassword`)
-        .send(forgotPassword)
-        .set('tenant', this.constants.tenant)
-        .end((err, resp) => {
-          if (!resp.ok) {
-            reject(err);
-            return;
-          }
-          resolve(JSON.parse(JSON.stringify(resp.body), Utils.jsonReviver));
-        });
+      const request = new MeshyRequest();
+      request.path = `users/forgotpassword`;
+      request.configureCallback(resolve, reject);
+      request.method = RequestService.POST;
+      request.data = forgotPassword;
+
+      this.requestService.sendRequest(request);
     });
   };
   public resetPassword = (passwordResetHash: IPasswordResetHash, newPassword: string) => {
@@ -47,17 +38,14 @@ export class UserService {
       passwordReset.hash = passwordResetHash.hash;
       passwordReset.username = passwordResetHash.username;
       passwordReset.newPassword = newPassword;
-      superagent
-        .post(`${this.constants.apiUrl}/users/resetpassword`)
-        .set('tenant', this.constants.tenant)
-        .send(passwordReset)
-        .end((err, resp) => {
-          if (!resp.ok) {
-            reject(err);
-            return;
-          }
-          resolve();
-        });
+
+      const request = new MeshyRequest();
+      request.path = `users/resetpassword`;
+      request.configureCallback(resolve, reject);
+      request.method = RequestService.POST;
+      request.data = passwordReset;
+
+      this.requestService.sendRequest(request);
     });
   };
 }

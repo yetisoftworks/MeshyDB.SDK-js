@@ -1,16 +1,20 @@
-import { MeshyDb } from './services/MeshyDb';
+import { MeshyDB } from './services/MeshyDB';
 
-export function initializeMeshyDb(clientKey: string, publicKey: string, tenant: string): IMeshyDb {
-  return new MeshyDb(clientKey, publicKey, tenant);
+export function initializeMeshyDB(clientKey: string, publicKey: string): IMeshyDB {
+  return new MeshyDB(clientKey, publicKey);
 }
 
-export interface IMeshyDb {
-  login(username: string, password: string): Promise<IMeshyDbClient>;
-  loginWithPersistance(persistanceToken: string): Promise<IMeshyDbClient>;
+export function initializeMeshyDBwithTenant(clientKey: string, tenant: string, publicKey: string): IMeshyDB {
+  return new MeshyDB(clientKey, publicKey, tenant);
+}
+
+export interface IMeshyDB {
+  login(username: string, password: string): Promise<IMeshyDBClient>;
+  loginWithPersistance(persistanceToken: string): Promise<IMeshyDBClient>;
   createUser(newUser: INewUser): Promise<IUser>;
   forgotPassword(username: string): Promise<IPasswordResetHash>;
   resetPassword(passwordResetHash: IPasswordResetHash, newPassword: string): Promise<void>;
-  loginAnonymously(username?: string): Promise<IMeshyDbClient>;
+  loginAnonymously(username?: string): Promise<IMeshyDBClient>;
 }
 
 export interface IMeshesService {
@@ -18,19 +22,19 @@ export interface IMeshesService {
   search<T extends IMeshData>(
     meshName: string,
     query: {
-      filter: any;
-      orderby: any;
-      pageNumber: number;
-      pageSize: number;
+      filter: any | undefined;
+      orderby: any | undefined;
+      pageNumber: number | undefined;
+      pageSize: number | undefined;
     },
-  ): Promise<PageResult<T>>;
+  ): Promise<IPageResult<T>>;
   create<T extends IMeshData>(meshName: string, data: T): Promise<T>;
   update<T extends IMeshData>(meshName: string, data: T, id?: string): Promise<T>;
   delete(meshName: string, id: string): Promise<void>;
   deleteCollection(meshName: string): Promise<void>;
 }
 
-export interface IMeshyDbClient {
+export interface IMeshyDBClient {
   usersService: IUsersService;
   meshesService: IMeshesService;
   updatePassword(previousPassword: string, newPassword: string): Promise<void>;
@@ -45,19 +49,19 @@ export interface IUsersService {
 }
 
 export interface IMeshData {
-  _id: string;
-  _rid: string;
+  _id: string | undefined;
+  _rid: string | undefined;
 }
 
 export interface IUser {
-  id: string;
-  username: string | null;
-  firstName: string | null;
-  lastName: string | null;
+  id: string | undefined;
+  username: string;
+  firstName: string | null | undefined;
+  lastName: string | null | undefined;
   verified: boolean;
   isActive: boolean;
-  phoneNumber: string | null;
-  roles: string[];
+  phoneNumber: string | null | undefined;
+  roles: string[] | undefined;
 }
 
 export interface INewUser extends IUser {
@@ -70,7 +74,7 @@ export interface IPasswordResetHash {
   hash: string;
 }
 
-export interface PageResult<T> {
+export interface IPageResult<T> {
   results: T[];
   page: number;
   pageSize: number;

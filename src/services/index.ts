@@ -5,3 +5,4 @@ export * from './MeshesService';
 export * from './MeshyDbClient';
 export * from './MeshyDb';
 export * from './Utils';
+export * from './RequestService';

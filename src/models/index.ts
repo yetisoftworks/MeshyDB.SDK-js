@@ -6,3 +6,4 @@ export * from './TokenRequest';
 export * from './TokenResponse';
 export * from './TokenRevocation';
 export * from './UserPasswordUpdate';
+export * from './MeshyRequest';
