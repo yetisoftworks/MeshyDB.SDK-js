@@ -4,7 +4,7 @@
   "description": "NodeJS integration with MeshyDb",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --config jestconfig.json",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "build": "run-s _clear _cleardist _makedeclaration _copydeclaration _cleardist _rollup",
@@ -36,18 +36,21 @@
   },
   "homepage": "https://github.com/yetisoftworks/MeshyDb.SDK-js#readme",
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "@types/superagent": "4.1.1",
     "@types/uuid": "3.4.4",
+    "jest": "^24.8.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.17.1",
     "rimraf": "^2.6.3",
     "rollup": "^1.12.4",
     "rollup-plugin-typescript3": "^1.1.2",
+    "rollup-plugin-uglify": "^6.0.2",
+    "ts-jest": "^24.0.2",
     "tslib": "^1.9.3",
     "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.5.1",
-    "rollup-plugin-uglify": "^6.0.2"
+    "typescript": "^3.5.1"
   },
   "dependencies": {
     "localstorage-ponyfill": "^1.0.2",
