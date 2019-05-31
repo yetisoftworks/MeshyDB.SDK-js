@@ -21,4 +21,4 @@ var moveFile = (file, dir2)=>{
     });
   };
   
-  moveFile('./dist/index.d.ts', './lib/');
+  moveFile('./dist/src/index.d.ts', './lib/');
