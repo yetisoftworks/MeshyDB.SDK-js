@@ -1,4 +1,4 @@
-import { MeshyDB } from './services/MeshyDB';
+import { MeshyDB } from "./services";
 
 export function initializeMeshyDB(clientKey: string, publicKey: string): IMeshyDB {
   return new MeshyDB(clientKey, publicKey);
