@@ -21,5 +21,9 @@ steps:
   displayName: 'npm install and build'
 
 - script: |
+    npm run lint
+  displayName: 'npm run lint'
+  
+- script: |
     npm test
   displayName: 'npm test'
