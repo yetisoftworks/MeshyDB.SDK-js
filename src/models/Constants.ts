@@ -5,11 +5,11 @@ export class Constants {
   public tenant: string | null | undefined = null;
   constructor(clientKey: string, publicKey: string, tenant?: string) {
     if (!clientKey) {
-      throw new Error("Missing parameter: clientKey");
+      throw new Error('Missing parameter: clientKey');
     }
-    
+
     if (!publicKey) {
-      throw new Error("Missing parameter: publicKey");
+      throw new Error('Missing parameter: publicKey');
     }
 
     this.apiUrl = `https://api.meshydb.com/${clientKey}`;

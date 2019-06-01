@@ -1,5 +1,5 @@
-import { Constants } from "../../src/models";
 import { v4 as guid } from 'uuid';
+import { Constants } from "../../src/models";
 
 test("Should create constants", () => {
     expect(new Constants(guid(), guid())).toBeTruthy();
@@ -10,11 +10,11 @@ test("Should create constants with tenant", () => {
 });
 
 test("Constants should throw error when client key is empty", () => {
-    expect(() => { new Constants("", guid(), guid()) }).toThrowError();
+    expect(() => new Constants("", guid(), guid())).toThrowError();
 });
 
 test("Constants should throw error when public key is empty", () => {
-    expect(() => { new Constants(guid(), "", guid()) }).toThrowError();
+    expect(() => new Constants(guid(), "", guid())).toThrowError();
 });
 
 test("Api url should be configured", () => {

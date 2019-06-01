@@ -7,7 +7,7 @@ export class MeshyRequest {
   public authenticationId: string | null = null;
   public source: string = 'api';
   public method: string = 'GET';
-  public queryData: any;
+  public queryData: any = null;
   public callback: (err: any, resp: superagent.Response) => void = () => {
     return;
   };
