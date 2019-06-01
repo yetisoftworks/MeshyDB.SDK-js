@@ -1,12 +1,12 @@
 import { IMeshData, IMeshesService, IPageResult } from '..';
 import { MeshyRequest } from '../models/MeshyRequest';
-import { RequestService } from './RequestService';
+import { IRequestService, RequestService } from './RequestService';
 import { Utils } from './Utils';
 
 export class MeshesService implements IMeshesService {
   private authenticationId: string;
-  private requestService: RequestService;
-  constructor(authId: string, requestService: RequestService) {
+  private requestService: IRequestService;
+  constructor(authId: string, requestService: IRequestService) {
     this.authenticationId = authId;
     this.requestService = requestService;
   }
@@ -15,7 +15,8 @@ export class MeshesService implements IMeshesService {
       const request = new MeshyRequest();
       request.authenticationId = this.authenticationId;
       request.path = `meshes/${meshName}/${id}`;
-      request.configureCallback(resolve, reject);
+
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
   public search = <T extends IMeshData>(
@@ -40,9 +41,8 @@ export class MeshesService implements IMeshesService {
       request.authenticationId = this.authenticationId;
       request.path = `meshes/${meshName}`;
       request.queryData = query;
-      request.configureCallback(resolve, reject);
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
   public create = <T extends IMeshData>(meshName: string, data: T) => {
@@ -53,11 +53,10 @@ export class MeshesService implements IMeshesService {
       const request = new MeshyRequest();
       request.authenticationId = this.authenticationId;
       request.path = `meshes/${meshName}`;
-      request.configureCallback(resolve, reject);
       request.method = RequestService.POST;
       request.data = dataClone;
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
   public update = <T extends IMeshData>(meshName: string, data: T, id?: string) => {
@@ -74,11 +73,10 @@ export class MeshesService implements IMeshesService {
       const request = new MeshyRequest();
       request.authenticationId = this.authenticationId;
       request.path = `meshes/${meshName}/${id}`;
-      request.configureCallback(resolve, reject);
       request.method = RequestService.PUT;
       request.data = dataClone;
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
   public delete = (meshName: string, id: string) => {
@@ -86,10 +84,9 @@ export class MeshesService implements IMeshesService {
       const request = new MeshyRequest();
       request.authenticationId = this.authenticationId;
       request.path = `meshes/${meshName}/${id}`;
-      request.configureCallback(resolve, reject);
       request.method = RequestService.DELETE;
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
   public deleteCollection = (meshName: string) => {
@@ -97,10 +94,9 @@ export class MeshesService implements IMeshesService {
       const request = new MeshyRequest();
       request.authenticationId = this.authenticationId;
       request.path = `meshes/${meshName}`;
-      request.configureCallback(resolve, reject);
       request.method = RequestService.DELETE;
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
 }

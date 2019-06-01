@@ -1,4 +1,4 @@
-import { MeshesService, RequestService, TokenService, UsersService } from '.';
+import { MeshesService, RequestService, TokenService, UsersService, Utils } from '.';
 import { IMeshesService, IMeshyDBClient, IUsersService } from '..';
 import { Constants, MeshyRequest, UserPasswordUpdate } from '../models';
 
@@ -31,9 +31,8 @@ export class MeshyDBClient implements IMeshyDBClient {
       request.data = updatePassword;
       request.path = 'users/me/password';
       request.method = RequestService.POST;
-      request.configureCallback(resolve, reject);
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
   public signout = () => {
@@ -48,9 +47,8 @@ export class MeshyDBClient implements IMeshyDBClient {
       request.authenticationId = this.authenticationId;
       request.path = 'connect/userinfo';
       request.source = RequestService.Auth;
-      request.configureCallback(resolve, reject);
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
 }

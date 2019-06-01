@@ -1,11 +1,12 @@
+import { Utils } from '.';
 import { IUser, IUsersService } from '..';
 import { MeshyRequest } from '../models/MeshyRequest';
-import { RequestService } from './RequestService';
+import { IRequestService, RequestService } from './RequestService';
 
 export class UsersService implements IUsersService {
   private authenticationId: string;
-  private requestService: RequestService;
-  constructor(authId: string, requestService: RequestService) {
+  private requestService: IRequestService;
+  constructor(authId: string, requestService: IRequestService) {
     this.authenticationId = authId;
     this.requestService = requestService;
   }
@@ -14,9 +15,8 @@ export class UsersService implements IUsersService {
       const request = new MeshyRequest();
       request.authenticationId = this.authenticationId;
       request.path = 'users/me';
-      request.configureCallback(resolve, reject);
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
   public updateSelf = (user: IUser) => {
@@ -24,11 +24,10 @@ export class UsersService implements IUsersService {
       const request = new MeshyRequest();
       request.authenticationId = this.authenticationId;
       request.path = 'users/me';
-      request.configureCallback(resolve, reject);
       request.method = RequestService.PUT;
       request.data = user;
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
 }

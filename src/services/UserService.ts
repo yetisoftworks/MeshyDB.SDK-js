@@ -1,34 +1,33 @@
+import { Utils } from '.';
 import { INewUser, IPasswordResetHash, IUser } from '..';
 import { ForgotPassword } from '../models/ForgotPassword';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { ResetPassword } from '../models/ResetPassword';
-import { RequestService } from './RequestService';
+import { IRequestService, RequestService } from './RequestService';
 
 export class UserService {
-  private requestService: RequestService;
-  constructor(requestService: RequestService) {
+  private requestService: IRequestService;
+  constructor(requestService: IRequestService) {
     this.requestService = requestService;
   }
   public createUser = (newUser: INewUser) => {
     return new Promise<IUser>((resolve, reject) => {
       const request = new MeshyRequest();
       request.path = `users`;
-      request.configureCallback(resolve, reject);
       request.method = RequestService.POST;
       request.data = newUser;
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
   public forgotPassword = (forgotPassword: ForgotPassword) => {
     return new Promise<IPasswordResetHash>((resolve, reject) => {
       const request = new MeshyRequest();
       request.path = `users/forgotpassword`;
-      request.configureCallback(resolve, reject);
       request.method = RequestService.POST;
       request.data = forgotPassword;
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
   public resetPassword = (passwordResetHash: IPasswordResetHash, newPassword: string) => {
@@ -41,11 +40,10 @@ export class UserService {
 
       const request = new MeshyRequest();
       request.path = `users/resetpassword`;
-      request.configureCallback(resolve, reject);
       request.method = RequestService.POST;
       request.data = passwordReset;
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
 }

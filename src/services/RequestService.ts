@@ -2,7 +2,7 @@ import superagent from 'superagent';
 import { TokenService } from '.';
 import { Constants, MeshyRequest } from '../models';
 
-export class RequestService {
+export class RequestService implements IRequestService {
   public static Auth = 'auth';
   public static API = 'api';
   public static GET = 'GET';
@@ -19,17 +19,21 @@ export class RequestService {
     this.tokenService = tokenService;
   }
 
-  public sendRequest = (request: MeshyRequest) => {
+  public sendRequest = (request: MeshyRequest, callback: (err: any, resp: superagent.Response) => void) => {
     if (request.authenticationId && this.tokenService) {
       this.tokenService.getAccessToken(request.authenticationId).then(accessToken => {
-        this.configureRequest(accessToken, request);
+        this.configureRequest(accessToken, request, callback);
       });
     } else {
-      this.configureRequest(null, request);
+      this.configureRequest(null, request, callback);
     }
   };
 
-  private configureRequest = (token: string | null, request: MeshyRequest) => {
+  private configureRequest = (
+    token: string | null,
+    request: MeshyRequest,
+    callback: (err: any, resp: superagent.Response) => void,
+  ) => {
     let url: string = '';
 
     if (request.source === RequestService.API) {
@@ -62,7 +66,7 @@ export class RequestService {
       requestConfig.send(request.data);
     }
 
-    requestConfig.end(request.callback);
+    requestConfig.end(callback);
   };
 
   private getRequestMethod = (url: string, method: string) => {
@@ -80,4 +84,8 @@ export class RequestService {
 
     return superagent.get(url);
   };
+}
+
+export interface IRequestService {
+  sendRequest(request: MeshyRequest, callback: (err: any, resp: superagent.Response) => void): void;
 }

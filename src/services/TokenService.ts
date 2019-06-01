@@ -1,3 +1,4 @@
+import superagent from 'superagent';
 import { v4 as guid } from 'uuid';
 import { Constants, MeshyRequest, TokenCacheData, TokenRequest, TokenResponse, TokenRevocation } from '../models';
 import { RequestService } from './RequestService';
@@ -25,7 +26,7 @@ export class TokenService {
       request.data = data;
       request.path = 'connect/token';
       request.type = RequestService.Form;
-      request.callback = (err, res) => {
+      const callback = (err: any, res: superagent.Response) => {
         if (!res.ok) {
           reject(err);
           return;
@@ -35,7 +36,7 @@ export class TokenService {
         resolve(authenticationId);
       };
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, callback);
     });
   };
   public getAccessToken = (authenticationId: string) => {
@@ -56,7 +57,7 @@ export class TokenService {
           request.data = refreshData;
           request.path = 'connect/token';
           request.type = RequestService.Form;
-          request.callback = (err, res) => {
+          const callback = (err: any, res: superagent.Response) => {
             if (res.ok) {
               reject(err);
               return;
@@ -66,7 +67,7 @@ export class TokenService {
             resolve(res.body.token);
           };
 
-          this.requestService.sendRequest(request);
+          this.requestService.sendRequest(request, callback);
         }
       } else {
         resolve(null);
@@ -86,7 +87,7 @@ export class TokenService {
       request.data = tokenRequest;
       request.path = 'connect/token';
       request.type = RequestService.Form;
-      request.callback = (err, res) => {
+      const callback = (err: any, res: superagent.Response) => {
         if (!res.ok) {
           reject(err);
         }
@@ -95,7 +96,7 @@ export class TokenService {
         resolve(authId);
       };
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, callback);
     });
   };
   public getRefreshToken = (authenticationId: string) => {
@@ -122,7 +123,7 @@ export class TokenService {
       request.data = revocation;
       request.path = 'connect/revocation';
       request.type = RequestService.Form;
-      request.callback = (err, res) => {
+      const callback = (err: any, res: superagent.Response) => {
         if (!res.ok) {
           reject(err);
           return;
@@ -131,7 +132,7 @@ export class TokenService {
         resolve();
       };
 
-      this.requestService.sendRequest(request);
+      this.requestService.sendRequest(request, callback);
     });
   };
   private getCacheData = (authenticationId: string) => {
