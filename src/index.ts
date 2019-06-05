@@ -35,26 +35,35 @@ export interface IMeshyDB {
    */
   loginWithPersistance(persistanceToken: string): Promise<IMeshyDBClient>;
   /**
-   * Creates a user within the system
-   * @param newUser User to create
+   * Registers a user within the system
+   * @param user User to create
    */
-  createUser(newUser: INewUser): Promise<IUser>;
+  registerUser(user: IRegisterUser): Promise<IUserVerificationHash>;
   /**
    * Generates request for password recovery
    * @param username User name to  recover password for
    */
-  forgotPassword(username: string): Promise<IPasswordResetHash>;
+  forgotPassword(username: string): Promise<IUserVerificationHash>;
   /**
    * Reserts password for user  based on hash  data
-   * @param passwordResetHash Hashed data for password reset parity
-   * @param newPassword New password for user
+   * @param resetPassword Reset password request to verify user and set new password
    */
-  resetPassword(passwordResetHash: IPasswordResetHash, newPassword: string): Promise<void>;
+  resetPassword(resetPassword: IResetPassword): Promise<void>;
   /**
    * Gets established client connection for anonymous
    * @param username Optional username to log in with
    */
   loginAnonymously(username?: string): Promise<IMeshyDBClient>;
+  /**
+   * Check hash of request to ensure correctness
+   * @param userVerificationCheck Verification data to check request
+   */
+  checkHash(userVerificationCheck: IUserVerificationCheck): Promise<boolean>;
+  /**
+   * Verify user to allow access to application
+   * @param userVerificationCheck Verification data to check request
+   */
+  verifyUser(userVerificationCheck: IUserVerificationCheck): Promise<void>;
 }
 
 /**
@@ -210,7 +219,23 @@ export interface IUser {
 /**
  * Defines a new user
  */
-export interface INewUser extends IUser {
+export interface IRegisterUser {
+  /**
+   * Name representing a user
+   */
+  username: string;
+  /**
+   * Optional field for first name
+   */
+  firstName: string | null | undefined;
+  /**
+   * Optional field for last name
+   */
+  lastName: string | null | undefined;
+  /**
+   * Optional field for phone number
+   */
+  phoneNumber: string | null;
   /**
    * New password for user
    */
@@ -218,9 +243,9 @@ export interface INewUser extends IUser {
 }
 
 /**
- * Defines a password reset hash request
+ * Defines a user  verification hash request
  */
-export interface IPasswordResetHash {
+export interface IUserVerificationHash {
   /**
    * Username requested password reset
    */
@@ -233,6 +258,10 @@ export interface IPasswordResetHash {
    * System generated hash for password reset parity
    */
   hash: string;
+  /**
+   * Hint for request to help the user recognize the request
+   */
+  hint: string;
 }
 
 /**
@@ -255,4 +284,24 @@ export interface IPageResult<T> {
    * Defines how many records were returned
    */
   totalRecords: number;
+}
+
+/**
+ * Defines a user verification check
+ */
+export interface IUserVerificationCheck extends IUserVerificationHash {
+  /**
+   * Verification code for hash parity
+   */
+  verificationCode: number;
+}
+
+/**
+ * Defines a password reset for a user
+ */
+export interface IResetPassword extends IUserVerificationCheck {
+  /**
+   * New password for user to be set
+   */
+  newPassword: string;
 }

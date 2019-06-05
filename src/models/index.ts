@@ -1,6 +1,5 @@
 export * from './Constants';
-export * from './ForgotPassword';
-export * from './ResetPassword';
+export * from './UserVerification';
 export * from './TokenCacheData';
 export * from './TokenRequest';
 export * from './TokenResponse';

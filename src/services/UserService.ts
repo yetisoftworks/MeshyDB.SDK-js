@@ -1,8 +1,8 @@
 import { Utils } from '.';
-import { INewUser, IPasswordResetHash, IUser } from '..';
-import { ForgotPassword } from '../models/ForgotPassword';
+import { IRegisterUser, IResetPassword, IUser, IUserVerificationCheck, IUserVerificationHash } from '..';
+import { AnonymousRegistration } from '../models/AnonymousRegistration';
 import { MeshyRequest } from '../models/MeshyRequest';
-import { ResetPassword } from '../models/ResetPassword';
+import { UserVerification } from '../models/UserVerification';
 import { IRequestService, RequestService } from './RequestService';
 
 export class UserService {
@@ -10,40 +10,67 @@ export class UserService {
   constructor(requestService: IRequestService) {
     this.requestService = requestService;
   }
-  public createUser = (newUser: INewUser) => {
-    return new Promise<IUser>((resolve, reject) => {
+  public registerUser = (user: IRegisterUser) => {
+    return new Promise<IUserVerificationHash>((resolve, reject) => {
       const request = new MeshyRequest();
-      request.path = `users`;
+      request.path = `users/register`;
       request.method = RequestService.POST;
-      request.data = newUser;
+      request.data = user;
 
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
-  public forgotPassword = (forgotPassword: ForgotPassword) => {
-    return new Promise<IPasswordResetHash>((resolve, reject) => {
+
+  public createAnonymousUser = (user: AnonymousRegistration) => {
+    return new Promise<IUser>((resolve, reject) => {
+      const request = new MeshyRequest();
+      request.path = `users/register/anonymous`;
+      request.method = RequestService.POST;
+      request.data = user;
+
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
+    });
+  };
+
+  public forgotPassword = (userVerification: UserVerification) => {
+    return new Promise<IUserVerificationHash>((resolve, reject) => {
       const request = new MeshyRequest();
       request.path = `users/forgotpassword`;
       request.method = RequestService.POST;
-      request.data = forgotPassword;
+      request.data = userVerification;
 
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
-  public resetPassword = (passwordResetHash: IPasswordResetHash, newPassword: string) => {
+  public resetPassword = (resetPassword: IResetPassword) => {
     return new Promise<void>((resolve, reject) => {
-      const passwordReset = new ResetPassword();
-      passwordReset.expires = passwordResetHash.expires;
-      passwordReset.hash = passwordResetHash.hash;
-      passwordReset.username = passwordResetHash.username;
-      passwordReset.newPassword = newPassword;
-
       const request = new MeshyRequest();
       request.path = `users/resetpassword`;
       request.method = RequestService.POST;
-      request.data = passwordReset;
+      request.data = resetPassword;
 
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
+  public checkHash(userVerificationCheck: IUserVerificationCheck) {
+    return new Promise<boolean>((resolve, reject) => {
+      const request = new MeshyRequest();
+      request.path = `users/checkhash`;
+      request.method = RequestService.POST;
+      request.data = userVerificationCheck;
+
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
+    });
+  }
+
+  public verify(userVerificationCheck: IUserVerificationCheck) {
+    return new Promise<void>((resolve, reject) => {
+      const request = new MeshyRequest();
+      request.path = `users/verify`;
+      request.method = RequestService.POST;
+      request.data = userVerificationCheck;
+
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
+    });
+  }
 }

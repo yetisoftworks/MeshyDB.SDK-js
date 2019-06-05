@@ -1,6 +1,6 @@
 import { v4 as guid } from 'uuid';
-import { INewUser, IPasswordResetHash } from "../../src";
-import { ForgotPassword, MeshyRequest, ResetPassword } from "../../src/models";
+import { IRegisterUser, IResetPassword } from "../../src";
+import { MeshyRequest, UserVerification } from "../../src/models";
 import { IRequestService, UserService } from "../../src/services";
 import { RequestServiceMock } from "./mocks/RequestService.mock";
 
@@ -25,14 +25,14 @@ test("createUser should send proper request", () => {
         firstName: guid(),
         lastName: guid(),
         username: guid()
-    } as INewUser;
+    } as IRegisterUser;
 
-    service.createUser(data).then(_ => {
+    service.registerUser(data).then(_ => {
         expect(true).toBeTruthy();
     });
 
     expect(passedRequest.authenticationId).toBeNull();
-    expect(passedRequest.path).toBe("users");
+    expect(passedRequest.path).toBe("users/register");
     expect(passedRequest.source).toBe("api");
     expect(passedRequest.method).toBe("POST");
     expect(passedRequest.type).toBe(null);
@@ -53,7 +53,7 @@ test("forgotPassword should send proper request", () => {
     }
 
     const service = new UserService(requestService);
-    const data = new ForgotPassword();
+    const data = new UserVerification();
     data.username = guid();
 
     service.forgotPassword(data).then(_ => {
@@ -81,21 +81,22 @@ test("resetPassword should send proper request", () => {
         }
     }
 
+    const newPassword = guid();
+
     const service = new UserService(requestService);
-    const data = {} as IPasswordResetHash;
+    const data = {} as IResetPassword;
     data.username = guid();
     data.expires = new Date();
     data.hash = guid();
+    data.newPassword = newPassword;
 
-    const newPassword = guid();
-
-    const expectedData = new ResetPassword();
+    const expectedData = {} as IResetPassword;
     expectedData.username = data.username;
     expectedData.expires = data.expires;
     expectedData.hash = data.hash;
     expectedData.newPassword = newPassword;
 
-    service.resetPassword(data, newPassword).then(_ => {
+    service.resetPassword(data).then(_ => {
         expect(true).toBeTruthy();
     });
 

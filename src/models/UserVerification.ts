@@ -1,3 +1,3 @@
-export class ForgotPassword {
+export class UserVerification {
   public username: string = '';
 }
