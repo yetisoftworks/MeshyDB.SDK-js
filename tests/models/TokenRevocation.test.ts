@@ -1,4 +1,4 @@
-import { TokenRevocation } from "../../src/models";
+import { TokenRevocation } from "../../src/models/TokenRevocation";
 
 test("Should create TokenRevocation", () => {
     const model = new TokenRevocation();

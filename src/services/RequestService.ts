@@ -1,6 +1,7 @@
 import superagent from 'superagent';
-import { TokenService } from '.';
-import { Constants, MeshyRequest } from '../models';
+import { Constants } from '../models/Constants';
+import { MeshyRequest } from '../models/MeshyRequest';
+import { TokenService } from './TokenService';
 
 export class RequestService implements IRequestService {
   public static Auth = 'auth';

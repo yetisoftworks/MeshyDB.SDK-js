@@ -1,9 +1,9 @@
-import { Utils } from '.';
 import { IRegisterUser, IResetPassword, IUser, IUserVerificationCheck, IUserVerificationHash } from '..';
 import { AnonymousRegistration } from '../models/AnonymousRegistration';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { UserVerification } from '../models/UserVerification';
 import { IRequestService, RequestService } from './RequestService';
+import { Utils } from './Utils';
 
 export class UserService {
   private requestService: IRequestService;

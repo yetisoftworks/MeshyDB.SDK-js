@@ -1,5 +1,5 @@
 import superagent from 'superagent';
-import { Utils } from "../../src/services";
+import { Utils } from '../../src/services/Utils';
 
 test("Javascript iso date string should be converted to type date", () => {
     const date = new Date().toISOString();
@@ -13,7 +13,6 @@ test("Date string should not be converted", () => {
 
 
 test('configure callback reject when response is not ok', () => {
-
     new Promise<any>((resolve, reject) => {
         const callback = Utils.configureCallback(resolve, reject);
         const response = {} as superagent.Response;

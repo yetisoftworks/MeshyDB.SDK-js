@@ -1,4 +1,4 @@
-import { TokenRequest } from "../../src/models";
+import { TokenRequest } from "../../src/models/TokenRequest";
 
 test("Should create TokenRequest", () => {
     const model = new TokenRequest();

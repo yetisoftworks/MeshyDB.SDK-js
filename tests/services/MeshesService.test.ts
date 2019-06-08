@@ -1,6 +1,7 @@
 import { v4 as guid } from 'uuid';
-import { MeshyRequest } from "../../src/models";
-import { IRequestService, MeshesService } from "../../src/services";
+import { MeshyRequest } from '../../src/models/MeshyRequest';
+import { MeshesService } from '../../src/services/MeshesService';
+import { IRequestService } from '../../src/services/RequestService';
 import { MeshDataMock } from "./mocks/MeshData.mock";
 import { RequestServiceMock } from "./mocks/RequestService.mock";
 

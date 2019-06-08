@@ -1,4 +1,4 @@
-import { UserPasswordUpdate } from "../../src/models";
+import { UserPasswordUpdate } from "../../src/models/UserPasswordUpdate";
 
 test("Should create UserPasswordUpdate",()=>{
     const model = new UserPasswordUpdate();

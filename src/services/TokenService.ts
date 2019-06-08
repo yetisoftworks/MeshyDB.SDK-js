@@ -1,6 +1,11 @@
 import superagent from 'superagent';
 import { v4 as guid } from 'uuid';
-import { Constants, MeshyRequest, TokenCacheData, TokenRequest, TokenResponse, TokenRevocation } from '../models';
+import { Constants } from '../models/Constants';
+import { MeshyRequest } from '../models/MeshyRequest';
+import { TokenCacheData } from '../models/TokenCacheData';
+import { TokenRequest } from '../models/TokenRequest';
+import { TokenResponse } from '../models/TokenResponse';
+import { TokenRevocation } from '../models/TokenRevocation';
 import { RequestService } from './RequestService';
 import { Utils } from './Utils';
 

@@ -1,7 +1,9 @@
 import { v4 as guid } from 'uuid';
 import { IRegisterUser, IResetPassword } from "../../src";
-import { MeshyRequest, UserVerification } from "../../src/models";
-import { IRequestService, UserService } from "../../src/services";
+import { MeshyRequest } from '../../src/models/MeshyRequest';
+import { UserVerification } from '../../src/models/UserVerification';
+import { IRequestService } from '../../src/services/RequestService';
+import { UserService } from '../../src/services/UserService';
 import { RequestServiceMock } from "./mocks/RequestService.mock";
 
 test("Should create UserService", () => {

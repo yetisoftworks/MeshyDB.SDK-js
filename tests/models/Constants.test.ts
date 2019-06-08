@@ -1,5 +1,5 @@
 import { v4 as guid } from 'uuid';
-import { Constants } from "../../src/models";
+import { Constants } from '../../src/models/Constants';
 
 test("Should create constants", () => {
     expect(new Constants(guid(), guid())).toBeTruthy();

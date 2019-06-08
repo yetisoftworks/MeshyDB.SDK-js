@@ -1,5 +1,5 @@
 import superagent from 'superagent';
-import { MeshyRequest } from "../../src/models";
+import { MeshyRequest } from '../../src/models/MeshyRequest';
 
 test('Should create MeshyRequest', () => {
     const model = new MeshyRequest();

@@ -1,4 +1,4 @@
-import { TokenCacheData } from "../../src/models";
+import { TokenCacheData } from "../../src/models/TokenCacheData";
 
 test("Should create TokenCacheData", () => {
     const model = new TokenCacheData();

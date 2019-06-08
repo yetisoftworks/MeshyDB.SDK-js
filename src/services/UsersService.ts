@@ -1,7 +1,7 @@
-import { Utils } from '.';
 import { IUser, IUsersService } from '..';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { IRequestService, RequestService } from './RequestService';
+import { Utils } from './Utils';
 
 export class UsersService implements IUsersService {
   private authenticationId: string;

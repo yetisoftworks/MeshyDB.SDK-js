@@ -1,4 +1,4 @@
-import { TokenResponse } from "../../src/models";
+import { TokenResponse } from "../../src/models/TokenResponse";
 
 test("Should create TokenResponse", () => {
     const model = new TokenResponse();

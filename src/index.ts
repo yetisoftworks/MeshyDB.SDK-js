@@ -1,22 +1,22 @@
-import { MeshyDB } from './services';
+import { MeshyDB } from './services/MeshyDb';
 
 /**
  * Initializes MeshyDB to establish a client
- * @param clientKey MeshyDB account name
+ * @param accountName MeshyDB account name
  * @param publicKey Client Public key for default tenant
  */
-export function initializeMeshyDB(clientKey: string, publicKey: string): IMeshyDB {
-  return new MeshyDB(clientKey, publicKey);
+export function initializeMeshyDB(accountName: string, publicKey: string): IMeshyDB {
+  return new MeshyDB(accountName, publicKey);
 }
 
 /**
  * Initializes MeshyDB to establish a client
- * @param clientKey MeshyDB account name
+ * @param accountName MeshyDB account name
  * @param tenant Name of tenant to connect
  * @param publicKey Client Public key for specified tenant
  */
-export function initializeMeshyDBwithTenant(clientKey: string, tenant: string, publicKey: string): IMeshyDB {
-  return new MeshyDB(clientKey, publicKey, tenant);
+export function initializeMeshyDBwithTenant(accountName: string, tenant: string, publicKey: string): IMeshyDB {
+  return new MeshyDB(accountName, publicKey, tenant);
 }
 
 /**
@@ -43,7 +43,7 @@ export interface IMeshyDB {
    * Generates request for password recovery
    * @param username User name to  recover password for
    */
-  forgotPassword(username: string): Promise<IUserVerificationHash>;
+  forgotPassword(username: string, attempt?: number): Promise<IUserVerificationHash>;
   /**
    * Reserts password for user  based on hash  data
    * @param resetPassword Reset password request to verify user and set new password
@@ -240,8 +240,14 @@ export interface IRegisterUser {
    * New password for user
    */
   newPassword: string;
+  emailAddress: string;
+  securityQuestions: ISecurityQuestions[];
 }
 
+export interface ISecurityQuestions {
+  question: string;
+  answer: string;
+}
 /**
  * Defines a user  verification hash request
  */
@@ -262,6 +268,7 @@ export interface IUserVerificationHash {
    * Hint for request to help the user recognize the request
    */
   hint: string;
+  attempt: number;
 }
 
 /**
@@ -293,7 +300,7 @@ export interface IUserVerificationCheck extends IUserVerificationHash {
   /**
    * Verification code for hash parity
    */
-  verificationCode: number;
+  verificationCode: string;
 }
 
 /**

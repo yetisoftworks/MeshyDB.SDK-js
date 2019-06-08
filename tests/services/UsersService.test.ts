@@ -1,7 +1,8 @@
 import { v4 as guid } from 'uuid';
 import { IUser } from "../../src";
-import { MeshyRequest } from "../../src/models";
-import { IRequestService, UsersService } from "../../src/services";
+import { MeshyRequest } from '../../src/models/MeshyRequest';
+import { IRequestService } from '../../src/services/RequestService';
+import { UsersService } from '../../src/services/UsersService';
 import { RequestServiceMock } from "./mocks/RequestService.mock";
 
 test("Should create UsersService", () => {

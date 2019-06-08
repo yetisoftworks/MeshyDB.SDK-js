@@ -1,6 +1,12 @@
-import { MeshesService, RequestService, TokenService, UsersService, Utils } from '.';
 import { IMeshesService, IMeshyDBClient, IUsersService } from '..';
-import { Constants, MeshyRequest, UserPasswordUpdate } from '../models';
+import { Constants } from '../models/Constants';
+import { MeshyRequest } from '../models/MeshyRequest';
+import { UserPasswordUpdate } from '../models/UserPasswordUpdate';
+import { MeshesService } from './MeshesService';
+import { RequestService } from './RequestService';
+import { TokenService } from './TokenService';
+import { UsersService } from './UsersService';
+import { Utils } from './Utils';
 
 export class MeshyDBClient implements IMeshyDBClient {
   public usersService: IUsersService;
@@ -16,12 +22,6 @@ export class MeshyDBClient implements IMeshyDBClient {
     this.meshesService = new MeshesService(authenticationId, this.requestService);
   }
   public updatePassword = (previousPassword: string, newPassword: string) => {
-    if (!previousPassword) {
-      throw new TypeError('Missing required parameter: previousPassword');
-    }
-    if (!newPassword) {
-      throw new TypeError('Missing required parameter: newPassword');
-    }
     const updatePassword = new UserPasswordUpdate();
     updatePassword.previousPassword = previousPassword;
     updatePassword.newPassword = newPassword;

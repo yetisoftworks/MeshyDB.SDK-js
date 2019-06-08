@@ -8,7 +8,11 @@ export default {
         {
             file: pkg.main,
             format: 'umd',
-            name: 'index'
+            name: 'index',
+            globals: {
+                superagent: 'superagent',
+                uuid: 'uuid'
+            }
         },
     ],
     external: [

@@ -1,4 +1,4 @@
-import { UserVerification } from "../../src/models";
+import { UserVerification } from "../../src/models/UserVerification";
 
 test('Should create Forgot Password', () => {
     expect(new UserVerification()).toBeTruthy();

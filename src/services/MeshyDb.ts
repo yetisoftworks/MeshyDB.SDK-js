@@ -1,8 +1,12 @@
 import { v4 as guid } from 'uuid';
-import { MeshyDBClient, RequestService, TokenService, UserService } from '.';
 import { IMeshyDB, IMeshyDBClient, IRegisterUser, IResetPassword, IUserVerificationCheck } from '..';
-import { Constants, UserVerification } from '../models';
 import { AnonymousRegistration } from '../models/AnonymousRegistration';
+import { Constants } from '../models/Constants';
+import { UserVerification } from '../models/UserVerification';
+import { MeshyDBClient } from './MeshyDbClient';
+import { RequestService } from './RequestService';
+import { TokenService } from './TokenService';
+import { UserService } from './UserService';
 
 export class MeshyDB implements IMeshyDB {
   private constants: Constants;
@@ -25,14 +29,6 @@ export class MeshyDB implements IMeshyDB {
   }
 
   public login = (username: string, password: string) => {
-    if (!username) {
-      throw new TypeError('Missing required parameter: username');
-    }
-
-    if (!password) {
-      throw new TypeError('Missing required parameter: password');
-    }
-
     return new Promise<IMeshyDBClient>((resolve, reject) => {
       this.tokenService
         .generateAccessToken(username, password)
@@ -46,10 +42,6 @@ export class MeshyDB implements IMeshyDB {
   };
 
   public loginWithPersistance = (persistanceToken: string) => {
-    if (!persistanceToken) {
-      throw new TypeError('Missing required parameter: persistanceToken');
-    }
-
     return new Promise<IMeshyDBClient>((resolve, reject) => {
       this.tokenService
         .generateAccessTokenWithRefreshToken(persistanceToken)
@@ -63,53 +55,18 @@ export class MeshyDB implements IMeshyDB {
   };
 
   public registerUser = (user: IRegisterUser) => {
-    if (!user.username) {
-      throw new TypeError('Missing required field: username');
-    }
-
-    if (!user.newPassword) {
-      throw new TypeError('Missing required field: newPassword');
-    }
-
-    if (!user.phoneNumber) {
-      throw new TypeError('Missing required field: phoneNumber');
-    }
-
     return this.userService.registerUser(user);
   };
 
-  public forgotPassword = (username: string) => {
-    if (!username) {
-      throw new TypeError('Missing required parameter: username');
-    }
-
+  public forgotPassword = (username: string, attempt?: number) => {
     const userVerification = new UserVerification();
     userVerification.username = username;
+    userVerification.attempt = attempt || 1;
 
     return this.userService.forgotPassword(userVerification);
   };
 
   public resetPassword = (resetPassword: IResetPassword) => {
-    if (!resetPassword.username) {
-      throw new Error('Missing required field: username');
-    }
-
-    if (!resetPassword.hash) {
-      throw new Error('Missing required field: hash');
-    }
-
-    if (!resetPassword.expires) {
-      throw new Error('Missing required field: expires');
-    }
-
-    if (!resetPassword.verificationCode) {
-      throw new Error('Missing required field: verificationCode');
-    }
-
-    if (!resetPassword.newPassword) {
-      throw new TypeError('Missing required parameter: newPassword');
-    }
-
     return this.userService.resetPassword(resetPassword);
   };
 
@@ -121,18 +78,14 @@ export class MeshyDB implements IMeshyDB {
       this.userService
         .createAnonymousUser(anonUser)
         .then(user => {
-          if (user.username) {
-            this.tokenService
-              .generateAccessToken(user.username, 'nopassword')
-              .then(authId => {
-                resolve(new MeshyDBClient(authId, this.constants, this.tokenService));
-              })
-              .catch(err => {
-                reject(err);
-              });
-          } else {
-            reject('Missing required field: username');
-          }
+          this.tokenService
+            .generateAccessToken(user.username, 'nopassword')
+            .then(authId => {
+              resolve(new MeshyDBClient(authId, this.constants, this.tokenService));
+            })
+            .catch(err => {
+              reject(err);
+            });
         })
         .catch(err => {
           reject(err);
@@ -141,22 +94,6 @@ export class MeshyDB implements IMeshyDB {
   };
 
   public checkHash = (userVerificationCheck: IUserVerificationCheck) => {
-    if (!userVerificationCheck.username) {
-      throw new Error('Missing required field: username');
-    }
-
-    if (!userVerificationCheck.hash) {
-      throw new Error('Missing required field: hash');
-    }
-
-    if (!userVerificationCheck.expires) {
-      throw new Error('Missing required field: expires');
-    }
-
-    if (!userVerificationCheck.verificationCode) {
-      throw new Error('Missing required field: verificationCode');
-    }
-
     return new Promise<boolean>((resolve, reject) => {
       this.userService
         .checkHash(userVerificationCheck)
@@ -170,22 +107,6 @@ export class MeshyDB implements IMeshyDB {
   };
 
   public verifyUser = (userVerificationCheck: IUserVerificationCheck) => {
-    if (!userVerificationCheck.username) {
-      throw new Error('Missing required field: username');
-    }
-
-    if (!userVerificationCheck.hash) {
-      throw new Error('Missing required field: hash');
-    }
-
-    if (!userVerificationCheck.expires) {
-      throw new Error('Missing required field: expires');
-    }
-
-    if (!userVerificationCheck.verificationCode) {
-      throw new Error('Missing required field: verificationCode');
-    }
-
     return new Promise<void>((resolve, reject) => {
       this.userService
         .verify(userVerificationCheck)
