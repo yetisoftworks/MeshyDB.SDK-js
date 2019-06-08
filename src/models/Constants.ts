@@ -3,17 +3,17 @@ export class Constants {
   public authUrl: string = '';
   public publicKey: string = '';
   public tenant: string | null | undefined = null;
-  constructor(clientKey: string, publicKey: string, tenant?: string) {
-    if (!clientKey) {
-      throw new Error('Missing parameter: clientKey');
+  constructor(accountName: string, publicKey: string, tenant?: string) {
+    if (!accountName) {
+      throw new Error('Missing parameter: accountName');
     }
 
     if (!publicKey) {
       throw new Error('Missing parameter: publicKey');
     }
 
-    this.apiUrl = `http://localhost:59487/${clientKey}`;
-    this.authUrl = `http://localhost:15333/${clientKey}`;
+    this.apiUrl = `https://api.meshydb.com/${accountName}`;
+    this.authUrl = `https://auth.meshydb.com/${accountName}`;
     this.publicKey = publicKey;
     this.tenant = tenant;
   }
