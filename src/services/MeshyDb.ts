@@ -70,22 +70,18 @@ export class MeshyDB implements IMeshyDB {
     return this.userService.resetPassword(resetPassword);
   };
 
-  public loginAnonymously = (username?: string) => {
+  public registerAnonymousUser = (username?: string) => {
     const anonUser = new AnonymousRegistration();
     anonUser.username = username || guid();
+    return this.userService.createAnonymousUser(anonUser);
+  };
 
+  public loginAnonymously = (username: string) => {
     return new Promise<IMeshyDBClient>((resolve, reject) => {
-      this.userService
-        .createAnonymousUser(anonUser)
-        .then(user => {
-          this.tokenService
-            .generateAccessToken(user.username, 'nopassword')
-            .then(authId => {
-              resolve(new MeshyDBClient(authId, this.constants, this.tokenService));
-            })
-            .catch(err => {
-              reject(err);
-            });
+      this.tokenService
+        .generateAccessToken(username, 'nopassword')
+        .then(authId => {
+          resolve(new MeshyDBClient(authId, this.constants, this.tokenService));
         })
         .catch(err => {
           reject(err);

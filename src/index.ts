@@ -214,6 +214,14 @@ export interface IUser {
    * Optional field defining a users set of roles
    */
   roles: string[] | undefined;
+  /**
+   * Collection identifying security questions for user verification
+   */
+  securityQuestions: ISecurityQuestions[];
+  /**
+   * Identifies if user is considered to be anonymous
+   */
+  anonymous: boolean;
 }
 
 /**
@@ -240,16 +248,28 @@ export interface IRegisterUser {
    * New password for user
    */
   newPassword: string;
+  /**
+   * Email address for user
+   */
   emailAddress: string;
+  /**
+   * Collection identifying security questions for user verification
+   */
   securityQuestions: ISecurityQuestions[];
 }
 
 export interface ISecurityQuestions {
+  /**
+   * Question hint for user verification
+   */
   question: string;
+  /**
+   * Answer to question for verification
+   */
   answer: string;
 }
 /**
- * Defines a user  verification hash request
+ * Defines a user verification hash request
  */
 export interface IUserVerificationHash {
   /**
@@ -268,6 +288,9 @@ export interface IUserVerificationHash {
    * Hint for request to help the user recognize the request
    */
   hint: string;
+  /**
+   * Attempt number for request hint.
+   */
   attempt: number;
 }
 
