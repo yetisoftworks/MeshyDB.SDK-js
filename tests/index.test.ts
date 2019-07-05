@@ -1,13 +1,13 @@
 import { v4 as guid } from 'uuid';
-import { initializeMeshyDB, initializeMeshyDBwithTenant } from "../src";
+import { initializeMeshyClient, initializeMeshyClientwithTenant } from "../src";
 
 
 test("initializeMeshyDB should create MeshyDB", () => {
-    const db = initializeMeshyDB(guid(), guid());
+    const db = initializeMeshyClient(guid(), guid());
     expect(db).toBeDefined();
 });
 
-test("initializeMeshyDBwithTenant should create MeshyDB", () => {
-    const db = initializeMeshyDBwithTenant(guid(), guid(), guid());
+test("initializeMeshyClientwithTenant should create MeshyDB", () => {
+    const db = initializeMeshyClientwithTenant(guid(), guid(), guid());
     expect(db).toBeDefined();
 });

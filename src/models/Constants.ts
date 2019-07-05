@@ -12,8 +12,11 @@ export class Constants {
       throw new Error('Missing parameter: publicKey');
     }
 
-    this.apiUrl = `https://api.meshydb.com/${accountName}`;
-    this.authUrl = `https://auth.meshydb.com/${accountName}`;
+    // "AuthURITemplate": "http://localhost:15333/{tenant}",
+    // "APIURITemplate": "http://localhost:59487/{tenant}",
+
+    this.apiUrl = `http://localhost:59487/${accountName}`;
+    this.authUrl = `http://localhost:15333/${accountName}`;
     this.publicKey = publicKey;
     this.tenant = tenant;
   }

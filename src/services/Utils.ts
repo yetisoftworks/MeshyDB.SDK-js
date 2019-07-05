@@ -15,7 +15,13 @@ export class Utils {
   ) => {
     return (err: any, resp: superagent.Response) => {
       if (!resp.ok) {
-        reject(err);
+        const respError = resp as any;
+        reject({
+          error: err,
+          statusCode: respError.statusCode,
+          statusText: respError.statusText,
+          response: respError.body,
+        });
         return;
       }
       resolve(resp.body);

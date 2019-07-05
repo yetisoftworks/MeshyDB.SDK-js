@@ -1,4 +1,4 @@
-import { IMeshesService, IMeshyDBClient, IUsersService } from '..';
+import { IMeshesService, IMeshyConnection, IUsersService } from '..';
 import { Constants } from '../models/Constants';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { UserPasswordUpdate } from '../models/UserPasswordUpdate';
@@ -8,7 +8,7 @@ import { TokenService } from './TokenService';
 import { UsersService } from './UsersService';
 import { Utils } from './Utils';
 
-export class MeshyDBClient implements IMeshyDBClient {
+export class MeshyConnection implements IMeshyConnection {
   public usersService: IUsersService;
   public meshesService: IMeshesService;
   private authenticationId: string;

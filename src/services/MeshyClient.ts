@@ -1,14 +1,14 @@
 import { v4 as guid } from 'uuid';
-import { IMeshyDB, IMeshyDBClient, IRegisterUser, IResetPassword, IUserVerificationCheck } from '..';
+import { IMeshyClient, IMeshyConnection, IRegisterUser, IResetPassword, IUserVerificationCheck } from '..';
 import { AnonymousRegistration } from '../models/AnonymousRegistration';
 import { Constants } from '../models/Constants';
 import { UserVerification } from '../models/UserVerification';
-import { MeshyDBClient } from './MeshyDbClient';
+import { MeshyConnection } from './MeshyConnection';
 import { RequestService } from './RequestService';
 import { TokenService } from './TokenService';
 import { UserService } from './UserService';
 
-export class MeshyDB implements IMeshyDB {
+export class MeshyClient implements IMeshyClient {
   private constants: Constants;
   private userService: UserService;
   private tokenService: TokenService;
@@ -29,11 +29,11 @@ export class MeshyDB implements IMeshyDB {
   }
 
   public login = (username: string, password: string) => {
-    return new Promise<IMeshyDBClient>((resolve, reject) => {
+    return new Promise<IMeshyConnection>((resolve, reject) => {
       this.tokenService
         .generateAccessToken(username, password)
         .then(authId => {
-          resolve(new MeshyDBClient(authId, this.constants, this.tokenService));
+          resolve(new MeshyConnection(authId, this.constants, this.tokenService));
         })
         .catch(err => {
           reject(err);
@@ -42,11 +42,11 @@ export class MeshyDB implements IMeshyDB {
   };
 
   public loginWithPersistance = (persistanceToken: string) => {
-    return new Promise<IMeshyDBClient>((resolve, reject) => {
+    return new Promise<IMeshyConnection>((resolve, reject) => {
       this.tokenService
         .generateAccessTokenWithRefreshToken(persistanceToken)
         .then(authId => {
-          resolve(new MeshyDBClient(authId, this.constants, this.tokenService));
+          resolve(new MeshyConnection(authId, this.constants, this.tokenService));
         })
         .catch(err => {
           reject(err);
@@ -77,11 +77,11 @@ export class MeshyDB implements IMeshyDB {
   };
 
   public loginAnonymously = (username: string) => {
-    return new Promise<IMeshyDBClient>((resolve, reject) => {
+    return new Promise<IMeshyConnection>((resolve, reject) => {
       this.tokenService
         .generateAccessToken(username, 'nopassword')
         .then(authId => {
-          resolve(new MeshyDBClient(authId, this.constants, this.tokenService));
+          resolve(new MeshyConnection(authId, this.constants, this.tokenService));
         })
         .catch(err => {
           reject(err);

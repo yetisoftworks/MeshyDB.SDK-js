@@ -1,12 +1,12 @@
-import { MeshyDB } from './services/MeshyDb';
+import { MeshyClient } from './services/MeshyClient';
 
 /**
  * Initializes MeshyDB to establish a client
  * @param accountName MeshyDB account name
  * @param publicKey Client Public key for default tenant
  */
-export function initializeMeshyDB(accountName: string, publicKey: string): IMeshyDB {
-  return new MeshyDB(accountName, publicKey);
+export function initializeMeshyClient(accountName: string, publicKey: string): IMeshyClient {
+  return new MeshyClient(accountName, publicKey);
 }
 
 /**
@@ -15,25 +15,25 @@ export function initializeMeshyDB(accountName: string, publicKey: string): IMesh
  * @param tenant Name of tenant to connect
  * @param publicKey Client Public key for specified tenant
  */
-export function initializeMeshyDBwithTenant(accountName: string, tenant: string, publicKey: string): IMeshyDB {
-  return new MeshyDB(accountName, publicKey, tenant);
+export function initializeMeshyClientwithTenant(accountName: string, tenant: string, publicKey: string): IMeshyClient {
+  return new MeshyClient(accountName, publicKey, tenant);
 }
 
 /**
  * Defines MeshyDB connection
  */
-export interface IMeshyDB {
+export interface IMeshyClient {
   /**
    * Gets established client connection for user
    * @param username Username to log in with
    * @param password Password of user to log in with
    */
-  login(username: string, password: string): Promise<IMeshyDBClient>;
+  login(username: string, password: string): Promise<IMeshyConnection>;
   /**
    * Gets established client connection for previously logged in user
    * @param persistanceToken Long living token to request login at a later time
    */
-  loginWithPersistance(persistanceToken: string): Promise<IMeshyDBClient>;
+  loginWithPersistance(persistanceToken: string): Promise<IMeshyConnection>;
   /**
    * Registers a user within the system
    * @param user User to create
@@ -53,7 +53,7 @@ export interface IMeshyDB {
    * Gets established client connection for anonymous
    * @param username Optional username to log in with
    */
-  loginAnonymously(username?: string): Promise<IMeshyDBClient>;
+  loginAnonymously(username?: string): Promise<IMeshyConnection>;
   /**
    * Check hash of request to ensure correctness
    * @param userVerificationCheck Verification data to check request
@@ -83,11 +83,11 @@ export interface IMeshesService {
    */
   search<T extends IMeshData>(
     meshName: string,
-    query: {
-      filter: any | undefined;
-      orderby: any | undefined;
-      pageNumber: number | undefined;
-      pageSize: number | undefined;
+    query?: {
+      filter?: any;
+      orderby?: any;
+      pageNumber?: number;
+      pageSize?: number;
     },
   ): Promise<IPageResult<T>>;
   /**
@@ -119,7 +119,7 @@ export interface IMeshesService {
 /**
  * Defines MeshyDB client for authenticated user
  */
-export interface IMeshyDBClient {
+export interface IMeshyConnection {
   /**
    * Service to manage logged in user
    */
@@ -170,12 +170,12 @@ export interface IMeshData {
   /**
    * System field representing the id of an item
    */
-  _id: string | undefined;
+  _id?: string | undefined;
 
   /**
    * System field representing the reference id of an item
    */
-  _rid: string | undefined;
+  _rid?: string | undefined;
 }
 
 /**
@@ -193,11 +193,11 @@ export interface IUser {
   /**
    * Optional field for first name
    */
-  firstName: string | null | undefined;
+  firstName?: string | null | undefined;
   /**
    * Optional field for last name
    */
-  lastName: string | null | undefined;
+  lastName?: string | null | undefined;
   /**
    * Identifies if a user has been verified
    */
@@ -209,7 +209,7 @@ export interface IUser {
   /**
    * Optional field for phone number
    */
-  phoneNumber: string | null | undefined;
+  phoneNumber?: string | null | undefined;
   /**
    * Optional field defining a users set of roles
    */
@@ -217,11 +217,15 @@ export interface IUser {
   /**
    * Collection identifying security questions for user verification
    */
-  securityQuestions: ISecurityQuestions[];
+  securityQuestions?: ISecurityQuestions[];
   /**
    * Identifies if user is considered to be anonymous
    */
   anonymous: boolean;
+  /**
+   * Optional field for email address
+   */
+  emailAddress?: string | null | undefined;
 }
 
 /**
@@ -233,29 +237,29 @@ export interface IRegisterUser {
    */
   username: string;
   /**
-   * Optional field for first name
-   */
-  firstName: string | null | undefined;
-  /**
-   * Optional field for last name
-   */
-  lastName: string | null | undefined;
-  /**
-   * Optional field for phone number
-   */
-  phoneNumber: string | null;
-  /**
    * New password for user
    */
   newPassword: string;
   /**
+   * Optional field for first name
+   */
+  firstName?: string | null | undefined;
+  /**
+   * Optional field for last name
+   */
+  lastName?: string | null | undefined;
+  /**
+   * Optional field for phone number
+   */
+  phoneNumber?: string | null;
+  /**
    * Email address for user
    */
-  emailAddress: string;
+  emailAddress?: string | null | undefined;
   /**
    * Collection identifying security questions for user verification
    */
-  securityQuestions: ISecurityQuestions[];
+  securityQuestions?: ISecurityQuestions[];
 }
 
 export interface ISecurityQuestions {

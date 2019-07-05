@@ -21,18 +21,16 @@ export class MeshesService implements IMeshesService {
   };
   public search = <T extends IMeshData>(
     meshName: string,
-    query: {
-      filter: any;
-      orderby: any;
-      pageNumber: number;
-      pageSize: number;
+    query?: {
+      filter?: any;
+      orderby?: any;
+      pageNumber?: number;
+      pageSize?: number;
     },
   ) => {
     query = query || {
-      filter: null,
-      orderby: null,
       pageNumber: 1,
-      pageSize: 1,
+      pageSize: 25,
     };
     query.pageNumber = query.pageNumber || 1;
     query.pageSize = query.pageSize || 25;

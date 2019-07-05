@@ -33,7 +33,13 @@ export class TokenService {
       request.type = RequestService.Form;
       const callback = (err: any, res: superagent.Response) => {
         if (!res.ok) {
-          reject(err);
+          const respError = res as any;
+          reject({
+            error: err,
+            statusCode: respError.statusCode,
+            statusText: respError.statusText,
+            response: respError.body,
+          });
           return;
         }
         const authenticationId = guid();
@@ -64,7 +70,14 @@ export class TokenService {
           request.type = RequestService.Form;
           const callback = (err: any, res: superagent.Response) => {
             if (res.ok) {
-              reject(err);
+              const respError = res as any;
+              reject({
+                error: err,
+                statusCode: respError.statusCode,
+                statusText: respError.statusText,
+                response: respError.body,
+              });
+
               return;
             }
 
@@ -94,7 +107,14 @@ export class TokenService {
       request.type = RequestService.Form;
       const callback = (err: any, res: superagent.Response) => {
         if (!res.ok) {
-          reject(err);
+          const respError = res as any;
+          reject({
+            error: err,
+            statusCode: respError.statusCode,
+            statusText: respError.statusText,
+            response: respError.body,
+          });
+          return;
         }
         const authId = guid();
         this.setCacheData(authId, this.convertToCacheData(res.body));
@@ -130,7 +150,14 @@ export class TokenService {
       request.type = RequestService.Form;
       const callback = (err: any, res: superagent.Response) => {
         if (!res.ok) {
-          reject(err);
+          const respError = res as any;
+          reject({
+            error: err,
+            statusCode: respError.statusCode,
+            statusText: respError.statusText,
+            response: respError.body,
+          });
+
           return;
         }
         this.removeCacheData(authenticationId);
