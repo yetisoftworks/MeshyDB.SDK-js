@@ -18,9 +18,9 @@ export class Utils {
         const respError = resp as any;
         reject({
           error: err,
+          response: respError.body,
           statusCode: respError.statusCode,
           statusText: respError.statusText,
-          response: respError.body,
         });
         return;
       }

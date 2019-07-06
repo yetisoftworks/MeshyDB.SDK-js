@@ -1,4 +1,4 @@
-import { IUser, IUsersService } from '..';
+import { ISecurityQuestionUpdate, IUser, IUsersService } from '..';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { IRequestService, RequestService } from './RequestService';
 import { Utils } from './Utils';
@@ -26,6 +26,17 @@ export class UsersService implements IUsersService {
       request.path = 'users/me';
       request.method = RequestService.PUT;
       request.data = user;
+
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
+    });
+  };
+  public updateSecurityQuestion = (questionUpdate: ISecurityQuestionUpdate) => {
+    return new Promise<void>((resolve, reject) => {
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = 'users/me/questions';
+      request.method = RequestService.POST;
+      request.data = questionUpdate;
 
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });

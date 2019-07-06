@@ -19,7 +19,7 @@ test('configure callback reject when response is not ok', () => {
         response.ok = false;
         callback("this is the error", response);
     }).catch(err => {
-        expect(err).toBe("this is the error");
+        expect(err.error).toBe("this is the error");
     });
 });
 

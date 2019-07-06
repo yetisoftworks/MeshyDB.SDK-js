@@ -36,9 +36,9 @@ export class TokenService {
           const respError = res as any;
           reject({
             error: err,
+            response: respError.body,
             statusCode: respError.statusCode,
             statusText: respError.statusText,
-            response: respError.body,
           });
           return;
         }
@@ -73,9 +73,9 @@ export class TokenService {
               const respError = res as any;
               reject({
                 error: err,
+                response: respError.body,
                 statusCode: respError.statusCode,
                 statusText: respError.statusText,
-                response: respError.body,
               });
 
               return;
@@ -110,9 +110,9 @@ export class TokenService {
           const respError = res as any;
           reject({
             error: err,
+            response: respError.body,
             statusCode: respError.statusCode,
             statusText: respError.statusText,
-            response: respError.body,
           });
           return;
         }
@@ -153,9 +153,9 @@ export class TokenService {
           const respError = res as any;
           reject({
             error: err,
+            response: respError.body,
             statusCode: respError.statusCode,
             statusText: respError.statusText,
-            response: respError.body,
           });
 
           return;

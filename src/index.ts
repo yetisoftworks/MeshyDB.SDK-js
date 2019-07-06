@@ -161,6 +161,11 @@ export interface IUsersService {
    * @param user User data to be updated
    */
   updateSelf(user: IUser): Promise<IUser>;
+  /**
+   * Update security questions for user
+   * @param questionUpdate Questions to be updated for user
+   */
+  updateSecurityQuestion(questionUpdate: ISecurityQuestionUpdate): Promise<void>;
 }
 
 /**
@@ -217,7 +222,7 @@ export interface IUser {
   /**
    * Collection identifying security questions for user verification
    */
-  securityQuestions?: ISecurityQuestions[];
+  securityQuestions?: ISecurityQuestionHash[];
   /**
    * Identifies if user is considered to be anonymous
    */
@@ -259,10 +264,26 @@ export interface IRegisterUser {
   /**
    * Collection identifying security questions for user verification
    */
-  securityQuestions?: ISecurityQuestions[];
+  securityQuestions?: ISecurityQuestion[];
 }
 
-export interface ISecurityQuestions {
+/**
+ * Defines Security Question with answer hash
+ */
+export interface ISecurityQuestionHash {
+  /**
+   * Question hint for user verification
+   */
+  question: string;
+  /**
+   * Answer hash to question for verification
+   */
+  answerHash: string;
+}
+/**
+ * Defines Security Question with answer text
+ */
+export interface ISecurityQuestion {
   /**
    * Question hint for user verification
    */
@@ -271,6 +292,15 @@ export interface ISecurityQuestions {
    * Answer to question for verification
    */
   answer: string;
+}
+/**
+ * Defines Security Questions to be updated for user
+ */
+export interface ISecurityQuestionUpdate {
+  /**
+   * Collection of questions and answers to be used for verification
+   */
+  securityQuestions: ISecurityQuestion[];
 }
 /**
  * Defines a user verification hash request
