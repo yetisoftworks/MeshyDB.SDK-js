@@ -1,8 +1,12 @@
 {
   "name": "@meshydb/sdk",
-  "version": "1.0.0",
+  "version": "0.5.0",
   "description": "NodeJS integration with MeshyDb",
   "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
     "test": "jest --config jestconfig.json",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
@@ -14,7 +18,12 @@
     "_tsc": "tsc",
     "_make-bundle": "node build/make-bundle",
     "_makedeclaration": "tsc --emitDeclarationOnly",
-    "_copydeclaration": "node build/copydeclaration"
+    "_copydeclaration": "node build/copydeclaration",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "keywords": [
     "meshy",
@@ -25,7 +34,10 @@
     "backend",
     "json"
   ],
-  "author": "Chris Pluta",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Yeti Softworks LLC",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -53,7 +65,6 @@
     "typescript": "^3.5.1"
   },
   "dependencies": {
-    "localstorage-ponyfill": "^1.0.2",
     "superagent": "^5.0.5",
     "uuid": "3.3.2"
   }
