@@ -1,22 +1,34 @@
-import { MeshyClient } from './services/MeshyClient';
+import { MeshyClient as InternalMeshyClient } from './services/MeshyClient';
 
 /**
- * Initializes MeshyDB to establish a client
- * @param accountName MeshyDB account name
- * @param publicKey Client Public key for default tenant
+ * Handles Meshy Client management
  */
-export function initializeMeshyClient(accountName: string, publicKey: string): IMeshyClient {
-  return new MeshyClient(accountName, publicKey);
-}
+export class MeshyClient {
+  /**
+   * Initializes MeshyDB to establish a client
+   * @param accountName MeshyDB account name
+   * @param publicKey Client Public key for default tenant
+   */
+  public static initialize = (accountName: string, publicKey: string): IMeshyClient => {
+    return new InternalMeshyClient(accountName, publicKey);
+  };
 
-/**
- * Initializes MeshyDB to establish a client
- * @param accountName MeshyDB account name
- * @param tenant Name of tenant to connect
- * @param publicKey Client Public key for specified tenant
- */
-export function initializeMeshyClientwithTenant(accountName: string, tenant: string, publicKey: string): IMeshyClient {
-  return new MeshyClient(accountName, publicKey, tenant);
+  /**
+   * Initializes MeshyDB to establish a client
+   * @param accountName MeshyDB account name
+   * @param tenant Name of tenant to connect
+   * @param publicKey Client Public key for specified tenant
+   */
+  public static initializeWithTenant = (accountName: string, tenant: string, publicKey: string): IMeshyClient => {
+    return new InternalMeshyClient(accountName, publicKey, tenant);
+  };
+
+  /**
+   * Gets current authenticated Meshy connection
+   */
+  public static get currentConnection(): IMeshyConnection | null {
+    return InternalMeshyClient.currentConnection;
+  }
 }
 
 /**

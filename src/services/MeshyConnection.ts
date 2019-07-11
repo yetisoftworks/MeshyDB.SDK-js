@@ -3,6 +3,7 @@ import { Constants } from '../models/Constants';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { UserPasswordUpdate } from '../models/UserPasswordUpdate';
 import { MeshesService } from './MeshesService';
+import { MeshyClient } from './MeshyClient';
 import { RequestService } from './RequestService';
 import { TokenService } from './TokenService';
 import { UsersService } from './UsersService';
@@ -36,6 +37,8 @@ export class MeshyConnection implements IMeshyConnection {
     });
   };
   public signout = () => {
+    MeshyClient.currentConnection = null;
+
     return this.tokenService.signout(this.authenticationId);
   };
   public retrievePersistanceToken = () => {

@@ -9,10 +9,12 @@ import { TokenService } from './TokenService';
 import { UserService } from './UserService';
 
 export class MeshyClient implements IMeshyClient {
+  public static currentConnection: IMeshyConnection | null;
   private constants: Constants;
   private userService: UserService;
   private tokenService: TokenService;
   private requestService: RequestService;
+
   constructor(clientKey: string, publicKey: string, tenant?: string) {
     if (!clientKey) {
       throw new TypeError('Empty parameter: clientkey.');
@@ -29,11 +31,16 @@ export class MeshyClient implements IMeshyClient {
   }
 
   public login = (username: string, password: string) => {
+    if (MeshyClient.currentConnection) {
+      throw new Error('Connection has already been established. Please sign out before switching');
+    }
+
     return new Promise<IMeshyConnection>((resolve, reject) => {
       this.tokenService
         .generateAccessToken(username, password)
         .then(authId => {
-          resolve(new MeshyConnection(authId, this.constants, this.tokenService));
+          MeshyClient.currentConnection = new MeshyConnection(authId, this.constants, this.tokenService);
+          resolve(MeshyClient.currentConnection);
         })
         .catch(err => {
           reject(err);
@@ -42,11 +49,17 @@ export class MeshyClient implements IMeshyClient {
   };
 
   public loginWithPersistance = (persistanceToken: string) => {
+    if (MeshyClient.currentConnection) {
+      throw new Error('Connection has already been established. Please sign out before switching');
+    }
+
     return new Promise<IMeshyConnection>((resolve, reject) => {
       this.tokenService
         .generateAccessTokenWithRefreshToken(persistanceToken)
         .then(authId => {
-          resolve(new MeshyConnection(authId, this.constants, this.tokenService));
+          MeshyClient.currentConnection = new MeshyConnection(authId, this.constants, this.tokenService);
+
+          resolve(MeshyClient.currentConnection);
         })
         .catch(err => {
           reject(err);
@@ -77,11 +90,17 @@ export class MeshyClient implements IMeshyClient {
   };
 
   public loginAnonymously = (username: string) => {
+    if (MeshyClient.currentConnection) {
+      throw new Error('Connection has already been established. Please sign out before switching');
+    }
+
     return new Promise<IMeshyConnection>((resolve, reject) => {
       this.tokenService
         .generateAccessToken(username, 'nopassword')
         .then(authId => {
-          resolve(new MeshyConnection(authId, this.constants, this.tokenService));
+          MeshyClient.currentConnection = new MeshyConnection(authId, this.constants, this.tokenService);
+
+          resolve(MeshyClient.currentConnection);
         })
         .catch(err => {
           reject(err);
