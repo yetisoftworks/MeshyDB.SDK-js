@@ -7,4 +7,4 @@ For how to get started please see https://docs.meshydb.com/en/latest/intro/getti
 ## What is Meshy? 
 MeshyDB gives you a fully functional API backend in minutes. We take care of the bulky time consuming API, letting you focus on the front-end design. Build apps faster by leveraging the MeshyDB backend.
 
-This SDK is developed in TypeScript and is distributed using NPM. 
+This SDK is developed in TypeScript and is distributed using [NPM](https://www.npmjs.com/package/@meshydb/sdk). 
