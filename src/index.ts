@@ -52,6 +52,11 @@ export interface IMeshyClient {
    */
   registerUser(user: IRegisterUser): Promise<IUserVerificationHash>;
   /**
+   * Registers anonymous user within the system
+   * @param username Username to log in with
+   */
+  registerAnonymousUser(username?: string): Promise<IUser>;
+  /**
    * Generates request for password recovery
    * @param username User name to  recover password for
    */
