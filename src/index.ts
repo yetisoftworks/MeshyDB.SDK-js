@@ -193,11 +193,6 @@ export interface IMeshData {
    * System field representing the id of an item
    */
   _id?: string | undefined;
-
-  /**
-   * System field representing the reference id of an item
-   */
-  _rid?: string | undefined;
 }
 
 /**
