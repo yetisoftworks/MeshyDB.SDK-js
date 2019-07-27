@@ -41,7 +41,7 @@ export class MeshyConnection implements IMeshyConnection {
 
     return this.tokenService.signout(this.authenticationId);
   };
-  public retrievePersistanceToken = () => {
+  public retrievePersistenceToken = () => {
     return this.tokenService.getRefreshToken(this.authenticationId);
   };
   public getMyUserInfo = () => {

@@ -48,14 +48,14 @@ export class MeshyClient implements IMeshyClient {
     });
   };
 
-  public loginWithPersistance = (persistanceToken: string) => {
+  public loginWithPersistence = (persistenceToken: string) => {
     if (MeshyClient.currentConnection) {
       throw new Error('Connection has already been established. Please sign out before switching');
     }
 
     return new Promise<IMeshyConnection>((resolve, reject) => {
       this.tokenService
-        .generateAccessTokenWithRefreshToken(persistanceToken)
+        .generateAccessTokenWithRefreshToken(persistenceToken)
         .then(authId => {
           MeshyClient.currentConnection = new MeshyConnection(authId, this.constants, this.tokenService);
 

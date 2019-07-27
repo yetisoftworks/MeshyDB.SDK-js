@@ -43,9 +43,9 @@ export interface IMeshyClient {
   login(username: string, password: string): Promise<IMeshyConnection>;
   /**
    * Gets established client connection for previously logged in user
-   * @param persistanceToken Long living token to request login at a later time
+   * @param persistenceToken Long living token to request login at a later time
    */
-  loginWithPersistance(persistanceToken: string): Promise<IMeshyConnection>;
+  loginWithPersistence(persistenceToken: string): Promise<IMeshyConnection>;
   /**
    * Registers a user within the system
    * @param user User to create
@@ -62,7 +62,7 @@ export interface IMeshyClient {
    */
   forgotPassword(username: string, attempt?: number): Promise<IUserVerificationHash>;
   /**
-   * Reserts password for user  based on hash  data
+   * Resets password for user  based on hash  data
    * @param resetPassword Reset password request to verify user and set new password
    */
   resetPassword(resetPassword: IResetPassword): Promise<void>;
@@ -70,7 +70,7 @@ export interface IMeshyClient {
    * Gets established client connection for anonymous
    * @param username Optional username to log in with
    */
-  loginAnonymously(username?: string): Promise<IMeshyConnection>;
+  loginAnonymously(username: string): Promise<IMeshyConnection>;
   /**
    * Check hash of request to ensure correctness
    * @param userVerificationCheck Verification data to check request
@@ -156,9 +156,9 @@ export interface IMeshyConnection {
    */
   signout(): Promise<void>;
   /**
-   * Retrieve Persistance token to be used for a later login
+   * Retrieve Persistence token to be used for a later login
    */
-  retrievePersistanceToken(): string | null;
+  retrievePersistenceToken(): string | null;
   /**
    * Gets user info claims
    */
