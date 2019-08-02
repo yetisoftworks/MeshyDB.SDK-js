@@ -43,9 +43,9 @@ export interface IMeshyClient {
   login(username: string, password: string): Promise<IMeshyConnection>;
   /**
    * Gets established client connection for previously logged in user
-   * @param persistenceToken Long living token to request login at a later time
+   * @param refreshToken Long living token to request login at a later time
    */
-  loginWithPersistence(persistenceToken: string): Promise<IMeshyConnection>;
+  loginWithRefresh(refreshToken: string): Promise<IMeshyConnection>;
   /**
    * Registers a user within the system
    * @param user User to create
@@ -58,7 +58,7 @@ export interface IMeshyClient {
   registerAnonymousUser(username?: string): Promise<IUser>;
   /**
    * Generates request for password recovery
-   * @param username User name to  recover password for
+   * @param username Username to recover password for
    */
   forgotPassword(username: string, attempt?: number): Promise<IUserVerificationHash>;
   /**
@@ -75,12 +75,17 @@ export interface IMeshyClient {
    * Check hash of request to ensure correctness
    * @param userVerificationCheck Verification data to check request
    */
-  checkHash(userVerificationCheck: IUserVerificationCheck): Promise<boolean>;
+  checkHash(userVerificationCheck: IUserVerificationCheck): Promise<IValid>;
   /**
    * Verify user to allow access to application
    * @param userVerificationCheck Verification data to check request
    */
   verifyUser(userVerificationCheck: IUserVerificationCheck): Promise<void>;
+  /**
+   * Checks if username already exists
+   * @param username Username to check
+   */
+  checkUserExist(username: string): Promise<IExist>;
 }
 
 /**
@@ -156,9 +161,9 @@ export interface IMeshyConnection {
    */
   signout(): Promise<void>;
   /**
-   * Retrieve Persistence token to be used for a later login
+   * Retrieve refresh token to be used for a later login
    */
-  retrievePersistenceToken(): string | null;
+  retrieveRefreshToken(): string | null;
   /**
    * Gets user info claims
    */
@@ -380,4 +385,24 @@ export interface IResetPassword extends IUserVerificationCheck {
    * New password for user to be set
    */
   newPassword: string;
+}
+
+/**
+ * Defines if an item exists
+ */
+export interface IExist {
+  /**
+   * Identifies if an item exists
+   */
+  exists: boolean;
+}
+
+/**
+ * Defines if an item is valid
+ */
+export interface IValid {
+  /**
+   * Identifies if an item is valid
+   */
+  isValid: boolean;
 }

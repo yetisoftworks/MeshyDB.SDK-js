@@ -1,5 +1,13 @@
 import { v4 as guid } from 'uuid';
-import { IMeshyClient, IMeshyConnection, IRegisterUser, IResetPassword, IUserVerificationCheck } from '..';
+import {
+  IExist,
+  IMeshyClient,
+  IMeshyConnection,
+  IRegisterUser,
+  IResetPassword,
+  IUserVerificationCheck,
+  IValid,
+} from '..';
 import { AnonymousRegistration } from '../models/AnonymousRegistration';
 import { Constants } from '../models/Constants';
 import { UserVerification } from '../models/UserVerification';
@@ -48,14 +56,14 @@ export class MeshyClient implements IMeshyClient {
     });
   };
 
-  public loginWithPersistence = (persistenceToken: string) => {
+  public loginWithRefresh = (refreshToken: string) => {
     if (MeshyClient.currentConnection) {
       throw new Error('Connection has already been established. Please sign out before switching');
     }
 
     return new Promise<IMeshyConnection>((resolve, reject) => {
       this.tokenService
-        .generateAccessTokenWithRefreshToken(persistenceToken)
+        .generateAccessTokenWithRefreshToken(refreshToken)
         .then(authId => {
           MeshyClient.currentConnection = new MeshyConnection(authId, this.constants, this.tokenService);
 
@@ -109,11 +117,11 @@ export class MeshyClient implements IMeshyClient {
   };
 
   public checkHash = (userVerificationCheck: IUserVerificationCheck) => {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<IValid>((resolve, reject) => {
       this.userService
         .checkHash(userVerificationCheck)
-        .then(success => {
-          resolve(success);
+        .then(valid => {
+          resolve(valid);
         })
         .catch(err => {
           reject(err);
@@ -127,6 +135,19 @@ export class MeshyClient implements IMeshyClient {
         .verify(userVerificationCheck)
         .then(_ => {
           resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  };
+
+  public checkUserExist = (username: string) => {
+    return new Promise<IExist>((resolve, reject) => {
+      this.userService
+        .checkUserExist(username)
+        .then(exists => {
+          resolve(exists);
         })
         .catch(err => {
           reject(err);

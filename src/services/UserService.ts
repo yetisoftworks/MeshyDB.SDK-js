@@ -1,4 +1,12 @@
-import { IRegisterUser, IResetPassword, IUser, IUserVerificationCheck, IUserVerificationHash } from '..';
+import {
+  IExist,
+  IRegisterUser,
+  IResetPassword,
+  IUser,
+  IUserVerificationCheck,
+  IUserVerificationHash,
+  IValid,
+} from '..';
 import { AnonymousRegistration } from '../models/AnonymousRegistration';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { UserVerification } from '../models/UserVerification';
@@ -52,8 +60,8 @@ export class UserService {
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
-  public checkHash(userVerificationCheck: IUserVerificationCheck) {
-    return new Promise<boolean>((resolve, reject) => {
+  public checkHash = (userVerificationCheck: IUserVerificationCheck) => {
+    return new Promise<IValid>((resolve, reject) => {
       const request = new MeshyRequest();
       request.path = `users/checkhash`;
       request.method = RequestService.POST;
@@ -61,9 +69,9 @@ export class UserService {
 
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
-  }
+  };
 
-  public verify(userVerificationCheck: IUserVerificationCheck) {
+  public verify = (userVerificationCheck: IUserVerificationCheck) => {
     return new Promise<void>((resolve, reject) => {
       const request = new MeshyRequest();
       request.path = `users/verify`;
@@ -72,5 +80,16 @@ export class UserService {
 
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
-  }
+  };
+
+  public checkUserExist = (username: string) => {
+    return new Promise<IExist>((resolve, reject) => {
+      const request = new MeshyRequest();
+      request.path = `users/${username}/exists`;
+      request.method = RequestService.GET;
+      request.data = username;
+
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
+    });
+  };
 }
