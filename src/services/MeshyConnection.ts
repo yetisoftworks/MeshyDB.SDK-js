@@ -12,7 +12,15 @@ import { Utils } from './Utils';
 export class MeshyConnection implements IMeshyConnection {
   public usersService: IUsersService;
   public meshesService: IMeshesService;
-  private authenticationId: string;
+
+  private set authenticationId(value: string) {
+    Utils.setStorage('_meshydb_authid_', value);
+  }
+
+  private get authenticationId() {
+    return Utils.retrieveStorage('_meshydb_authid_') || '';
+  }
+
   private tokenService: TokenService;
   private requestService: RequestService;
   constructor(authenticationId: string, constants: Constants, tokenService: TokenService) {

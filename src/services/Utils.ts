@@ -1,7 +1,6 @@
 import superagent from 'superagent';
 
 export class Utils {
-  public static ISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
   public static jsonReviver = (key: any, value: any) => {
     if (typeof value === 'string' && Utils.ISO.test(value)) {
       return new Date(value);
@@ -27,4 +26,34 @@ export class Utils {
       resolve(resp.body);
     };
   };
+  public static setStorage = <T>(key: string, value: T) => {
+    if (Utils.isBrowser) {
+      sessionStorage[key] = JSON.stringify(value);
+    } else {
+      Utils.storage[key] = JSON.stringify(value);
+    }
+  };
+
+  public static retrieveStorage = <T>(key: string): T | null => {
+    const data = Utils.isBrowser ? sessionStorage[key] : Utils.storage[key];
+    if (data && data !== 'undefined') {
+      return JSON.parse(data, Utils.jsonReviver) as T;
+    }
+    return null;
+  };
+
+  public static deleteFromStorage = (key: string) => {
+    if (Utils.isBrowser) {
+      sessionStorage.removeItem(key);
+    } else {
+      delete Utils.storage[key];
+    }
+  };
+
+  private static ISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+  private static storage: any = {};
+
+  private static get isBrowser() {
+    return typeof window !== 'undefined' && typeof window.document !== 'undefined';
+  }
 }

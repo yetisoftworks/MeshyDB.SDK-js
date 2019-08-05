@@ -15,9 +15,25 @@ import { MeshyConnection } from './MeshyConnection';
 import { RequestService } from './RequestService';
 import { TokenService } from './TokenService';
 import { UserService } from './UserService';
+import { Utils } from './Utils';
 
 export class MeshyClient implements IMeshyClient {
-  public static currentConnection: IMeshyConnection | null;
+  public static set currentConnection(value) {
+    MeshyClient._currentConnection = value;
+  }
+
+  public static get currentConnection() {
+    if (!this._currentConnection && TokenService.wasSignedIn()) {
+      const constants = Constants.restore();
+      const client = new MeshyClient(constants.accountName, constants.publicKey, constants.tenant || '');
+      client.restoreSession();
+    }
+
+    return this._currentConnection;
+  }
+
+  private static _currentConnection: IMeshyConnection | null;
+
   private constants: Constants;
   private userService: UserService;
   private tokenService: TokenService;
@@ -153,5 +169,10 @@ export class MeshyClient implements IMeshyClient {
           reject(err);
         });
     });
+  };
+
+  private restoreSession = () => {
+    const authId = Utils.retrieveStorage<string>('_meshydb_authid_');
+    MeshyClient.currentConnection = new MeshyConnection(authId || '', this.constants, this.tokenService);
   };
 }

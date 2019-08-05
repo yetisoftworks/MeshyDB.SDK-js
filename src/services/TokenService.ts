@@ -10,7 +10,11 @@ import { RequestService } from './RequestService';
 import { Utils } from './Utils';
 
 export class TokenService {
-  private storage: any = {};
+  public static wasSignedIn = () => {
+    return !!Utils.retrieveStorage(TokenService.storageKey);
+  };
+
+  private static storageKey = '_meshydb_auth_';
   private constants: Constants;
   private requestService: RequestService;
 
@@ -43,7 +47,7 @@ export class TokenService {
           return;
         }
         const authenticationId = guid();
-        this.setCacheData(authenticationId, this.convertToCacheData(res.body));
+        Utils.setStorage(TokenService.storageKey, this.convertToCacheData(res.body));
         resolve(authenticationId);
       };
 
@@ -52,7 +56,7 @@ export class TokenService {
   };
   public getAccessToken = (authenticationId: string) => {
     return new Promise<string | null>((resolve, reject) => {
-      const data = this.getCacheData(authenticationId);
+      const data = Utils.retrieveStorage<TokenCacheData>(TokenService.storageKey);
       if (data) {
         if (data.expires > new Date()) {
           resolve(data.token);
@@ -81,7 +85,7 @@ export class TokenService {
               return;
             }
 
-            this.setCacheData(authenticationId, res.body);
+            Utils.setStorage(TokenService.storageKey, this.convertToCacheData(res.body));
             resolve(res.body.token);
           };
 
@@ -117,7 +121,8 @@ export class TokenService {
           return;
         }
         const authId = guid();
-        this.setCacheData(authId, this.convertToCacheData(res.body));
+        Utils.setStorage(TokenService.storageKey, this.convertToCacheData(res.body));
+
         resolve(authId);
       };
 
@@ -125,7 +130,7 @@ export class TokenService {
     });
   };
   public getRefreshToken = (authenticationId: string) => {
-    const cache = this.getCacheData(authenticationId);
+    const cache = Utils.retrieveStorage<TokenCacheData>(TokenService.storageKey);
     if (cache) {
       return cache.refreshToken;
     }
@@ -133,7 +138,7 @@ export class TokenService {
   };
   public signout = (authenticationId: string) => {
     return new Promise<void>((resolve, reject) => {
-      const cache = this.getCacheData(authenticationId);
+      const cache = Utils.retrieveStorage<TokenCacheData>(TokenService.storageKey);
       if (!cache) {
         return;
       }
@@ -160,22 +165,12 @@ export class TokenService {
 
           return;
         }
-        this.removeCacheData(authenticationId);
+        Utils.deleteFromStorage(TokenService.storageKey);
         resolve();
       };
 
       this.requestService.sendRequest(request, callback);
     });
-  };
-  private getCacheData = (authenticationId: string) => {
-    const data = this.storage[this.getStorageKey(authenticationId)];
-    if (data) {
-      return JSON.parse(data, Utils.jsonReviver) as TokenCacheData;
-    }
-    return null;
-  };
-  private getStorageKey = (authenticationId: string) => {
-    return `_meshydb_authid_${authenticationId}`;
   };
   private convertToCacheData = (response: TokenResponse) => {
     const cache = new TokenCacheData();
@@ -184,11 +179,5 @@ export class TokenService {
     const expirationDate = new Date();
     cache.expires = new Date(expirationDate.setSeconds(expirationDate.getSeconds() + response.expires_in));
     return cache;
-  };
-  private setCacheData = (authenticationId: string, data: TokenCacheData) => {
-    this.storage[this.getStorageKey(authenticationId)] = JSON.stringify(data);
-  };
-  private removeCacheData = (authenticationId: string) => {
-    delete this.storage[this.getStorageKey(authenticationId)];
   };
 }
