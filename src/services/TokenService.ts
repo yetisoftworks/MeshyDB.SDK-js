@@ -54,6 +54,15 @@ export class TokenService {
       this.requestService.sendRequest(request, callback);
     });
   };
+  public retrieveAccessToken = () => {
+    const data = Utils.retrieveStorage<TokenCacheData>(TokenService.storageKey);
+    if (data) {
+      return data.token;
+    }
+
+    return null;
+  };
+
   public getAccessToken = (authenticationId: string) => {
     return new Promise<string | null>((resolve, reject) => {
       const data = Utils.retrieveStorage<TokenCacheData>(TokenService.storageKey);

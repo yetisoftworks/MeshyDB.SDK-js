@@ -151,6 +151,10 @@ export interface IMeshyConnection {
    */
   meshesService: IMeshesService;
   /**
+   * Retrieve currently authorized user
+   */
+  currentUser: ICurrentUser | null;
+  /**
    * Update password for logged in user
    * @param previousPassword Previous password for user
    * @param newPassword New password for user
@@ -164,10 +168,6 @@ export interface IMeshyConnection {
    * Retrieve refresh token to be used for a later login
    */
   retrieveRefreshToken(): string | null;
-  /**
-   * Gets user info claims
-   */
-  getMyUserInfo(): Promise<any>;
 }
 
 /**
@@ -405,4 +405,30 @@ export interface IValid {
    * Identifies if an item is valid
    */
   isValid: boolean;
+}
+
+/**
+ * Defines currently authorized user
+ */
+export interface ICurrentUser {
+  /**
+   * User's first name
+   */
+  firstName: string;
+  /**
+   * User's last name
+   */
+  lastName: string;
+  /**
+   * Collection of roles user has defined
+   */
+  roles: string[];
+  /**
+   * User's id
+   */
+  id: string;
+  /**
+   * Unique identifier of anonymous user, such as a device id
+   */
+  username: string;
 }

@@ -1,4 +1,4 @@
-import { IMeshesService, IMeshyConnection, IUsersService } from '..';
+import { ICurrentUser, IMeshesService, IMeshyConnection, IUsersService } from '..';
 import { Constants } from '../models/Constants';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { UserPasswordUpdate } from '../models/UserPasswordUpdate';
@@ -10,6 +10,35 @@ import { UsersService } from './UsersService';
 import { Utils } from './Utils';
 
 export class MeshyConnection implements IMeshyConnection {
+  set currentUser(value) {
+    this._currentUser = value;
+  }
+
+  get currentUser() {
+    if (this._currentUser) {
+      return this._currentUser;
+    }
+
+    if (MeshyClient.currentConnection) {
+      const accessToken = this.tokenService.retrieveAccessToken();
+      if (accessToken) {
+        const parsedToken = this.parseJwt(accessToken);
+
+        this._currentUser = {
+          firstName: parsedToken[this.claimNames.given_name] || '',
+          id: parsedToken[this.claimNames.sub] || '',
+          lastName: parsedToken[this.claimNames.family_name] || '',
+          roles: parsedToken[this.claimNames.role] || [],
+          username: parsedToken[this.claimNames.id] || '',
+        } as ICurrentUser;
+      }
+
+      return this._currentUser;
+    }
+
+    return null;
+  }
+
   public usersService: IUsersService;
   public meshesService: IMeshesService;
 
@@ -23,6 +52,15 @@ export class MeshyConnection implements IMeshyConnection {
 
   private tokenService: TokenService;
   private requestService: RequestService;
+  private _currentUser: ICurrentUser | null = null;
+  private claimNames = {
+    family_name: 'family_name',
+    given_name: 'given_name',
+    id: 'id',
+    role: 'role',
+    sub: 'sub',
+  };
+
   constructor(authenticationId: string, constants: Constants, tokenService: TokenService) {
     this.authenticationId = authenticationId;
     this.tokenService = tokenService;
@@ -46,20 +84,25 @@ export class MeshyConnection implements IMeshyConnection {
   };
   public signout = () => {
     MeshyClient.currentConnection = null;
+    Utils.clearStorage();
 
     return this.tokenService.signout(this.authenticationId);
   };
   public retrieveRefreshToken = () => {
     return this.tokenService.getRefreshToken(this.authenticationId);
   };
-  public getMyUserInfo = () => {
-    return new Promise<any>((resolve, reject) => {
-      const request = new MeshyRequest();
-      request.authenticationId = this.authenticationId;
-      request.path = 'connect/userinfo';
-      request.source = RequestService.Auth;
+  private parseJwt = (token: string) => {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join(''),
+    );
 
-      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
-    });
+    return JSON.parse(jsonPayload);
   };
 }

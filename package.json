@@ -1,6 +1,6 @@
 {
   "name": "@meshydb/sdk",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "MeshyDB gives you a fully functional API backend in minutes. We take care of the bulky time consuming API, letting you focus on the front-end design. Build apps faster by leveraging the MeshyDB backend.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",

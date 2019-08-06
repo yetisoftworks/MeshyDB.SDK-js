@@ -49,6 +49,21 @@ export class Utils {
       delete Utils.storage[key];
     }
   };
+  public static clearStorage = () => {
+    if (Utils.isBrowser) {
+      const keys = Object.keys(sessionStorage);
+
+      if (keys) {
+        for (const item of keys) {
+          if (item.startsWith('_meshydb_')) {
+            sessionStorage.removeItem(item);
+          }
+        }
+      }
+    } else {
+      Utils.storage = {};
+    }
+  };
 
   private static ISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
   private static storage: any = {};
