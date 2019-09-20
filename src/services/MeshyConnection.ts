@@ -1,9 +1,10 @@
-import { ICurrentUser, IMeshesService, IMeshyConnection, IUsersService } from '..';
+import { ICurrentUser, IMeshesService, IMeshyConnection, IProjectionsService, IUsersService } from '..';
 import { Constants } from '../models/Constants';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { UserPasswordUpdate } from '../models/UserPasswordUpdate';
 import { MeshesService } from './MeshesService';
 import { MeshyClient } from './MeshyClient';
+import { ProjectionsService } from './ProjectionsService';
 import { RequestService } from './RequestService';
 import { TokenService } from './TokenService';
 import { UsersService } from './UsersService';
@@ -41,6 +42,7 @@ export class MeshyConnection implements IMeshyConnection {
 
   public usersService: IUsersService;
   public meshesService: IMeshesService;
+  public projectionsService: IProjectionsService;
 
   private set authenticationId(value: string) {
     Utils.setStorage('_meshydb_authid_', value);
@@ -67,6 +69,7 @@ export class MeshyConnection implements IMeshyConnection {
     this.requestService = new RequestService(constants, this.tokenService);
     this.usersService = new UsersService(authenticationId, this.requestService);
     this.meshesService = new MeshesService(authenticationId, this.requestService);
+    this.projectionsService = new ProjectionsService(authenticationId, this.requestService);
   }
   public updatePassword = (previousPassword: string, newPassword: string) => {
     const updatePassword = new UserPasswordUpdate();

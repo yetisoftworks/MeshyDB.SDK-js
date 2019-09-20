@@ -108,7 +108,7 @@ export interface IMeshesService {
     query?: {
       filter?: any;
       orderby?: any;
-      pageNumber?: number;
+      page?: number;
       pageSize?: number;
     },
   ): Promise<IPageResult<T>>;
@@ -139,6 +139,23 @@ export interface IMeshesService {
 }
 
 /**
+ * Defines service to manage projections
+ */
+export interface IProjectionsService {
+  /**
+   * Gets projection data
+   * @param projectionName Name of projection
+   * @param query Query data for retrieving data
+   */
+  get<T>(projectionName: string,
+    query?: {
+      orderby?: any;
+      page?: number;
+      pageSize?: number;
+    }): Promise<IPageResult<T>>;
+}
+
+/**
  * Defines MeshyDB client for authenticated user
  */
 export interface IMeshyConnection {
@@ -150,6 +167,10 @@ export interface IMeshyConnection {
    * Service to manage meshes
    */
   meshesService: IMeshesService;
+  /**
+   * Service to manage projections
+   */
+  projectionsService:IProjectionsService;
   /**
    * Retrieve currently authorized user
    */

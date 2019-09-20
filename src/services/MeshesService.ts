@@ -24,15 +24,15 @@ export class MeshesService implements IMeshesService {
     query?: {
       filter?: any;
       orderby?: any;
-      pageNumber?: number;
+      page?: number;
       pageSize?: number;
     },
   ) => {
     query = query || {
-      pageNumber: 1,
+      page: 1,
       pageSize: 25,
     };
-    query.pageNumber = query.pageNumber || 1;
+    query.page = query.page || 1;
     query.pageSize = query.pageSize || 25;
     return new Promise<IPageResult<T>>((resolve, reject) => {
       const request = new MeshyRequest();
