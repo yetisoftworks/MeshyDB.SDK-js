@@ -13,7 +13,7 @@ export class ProjectionsService implements IProjectionsService {
 
     public get = <T>(projectionName: string,
         query?: {
-            orderby?: any;
+            orderBy?: any;
             page?: number;
             pageSize?: number;
         }) => {
@@ -23,7 +23,7 @@ export class ProjectionsService implements IProjectionsService {
         };
         query.page = query.page || 1;
         query.pageSize = query.pageSize || 25;
-        
+
         return new Promise<IPageResult<T>>((resolve, reject) => {
             const request = new MeshyRequest();
             request.authenticationId = this.authenticationId;

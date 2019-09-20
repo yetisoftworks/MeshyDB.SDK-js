@@ -23,7 +23,7 @@ export class MeshesService implements IMeshesService {
     meshName: string,
     query?: {
       filter?: any;
-      orderby?: any;
+      orderBy?: any;
       page?: number;
       pageSize?: number;
     },

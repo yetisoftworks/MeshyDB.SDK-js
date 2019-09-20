@@ -107,7 +107,7 @@ export interface IMeshesService {
     meshName: string,
     query?: {
       filter?: any;
-      orderby?: any;
+      orderBy?: any;
       page?: number;
       pageSize?: number;
     },
@@ -149,7 +149,7 @@ export interface IProjectionsService {
    */
   get<T>(projectionName: string,
     query?: {
-      orderby?: any;
+      orderBy?: any;
       page?: number;
       pageSize?: number;
     }): Promise<IPageResult<T>>;

@@ -53,8 +53,8 @@ test("search should send proper request", () => {
     const meshName = guid();
     const queryData = {
         filter: { data: 5 },
-        orderby: { data: -1 },
-        pageNumber: 1,
+        orderBy: { data: -1 },
+        page: 1,
         pageSize: 1
     };
 
@@ -87,8 +87,8 @@ test("search should set page number to 1 when set to 0", () => {
     const meshName = guid();
     const queryData = {
         filter: { data: 5 },
-        orderby: { data: -1 },
-        pageNumber: 0,
+        orderBy: { data: -1 },
+        page: 0,
         pageSize: 1
     };
 
@@ -96,7 +96,7 @@ test("search should set page number to 1 when set to 0", () => {
         expect(true).toBeTruthy();
     });
 
-    expect(passedRequest.queryData.pageNumber).toBe(1);
+    expect(passedRequest.queryData.page).toBe(1);
 });
 
 test("search should set page size to 25 when set to 0", () => {
@@ -114,8 +114,8 @@ test("search should set page size to 25 when set to 0", () => {
     const meshName = guid();
     const queryData = {
         filter: { data: 5 },
-        orderby: { data: -1 },
-        pageNumber: 1,
+        orderBy: { data: -1 },
+        page: 1,
         pageSize: 0
     };
 
