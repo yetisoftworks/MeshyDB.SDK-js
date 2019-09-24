@@ -131,11 +131,6 @@ export interface IMeshesService {
    * @param id Id of mesh data to update
    */
   delete(meshName: string, id: string): Promise<void>;
-  /**
-   * Delete mesh collection
-   * @param meshName Name of mesh collection
-   */
-  deleteCollection(meshName: string): Promise<void>;
 }
 
 /**
@@ -147,12 +142,14 @@ export interface IProjectionsService {
    * @param projectionName Name of projection
    * @param query Query data for retrieving data
    */
-  get<T>(projectionName: string,
+  get<T>(
+    projectionName: string,
     query?: {
       orderBy?: any;
       page?: number;
       pageSize?: number;
-    }): Promise<IPageResult<T>>;
+    },
+  ): Promise<IPageResult<T>>;
 }
 
 /**
@@ -170,7 +167,7 @@ export interface IMeshyConnection {
   /**
    * Service to manage projections
    */
-  projectionsService:IProjectionsService;
+  projectionsService: IProjectionsService;
   /**
    * Retrieve currently authorized user
    */

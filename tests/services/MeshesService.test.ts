@@ -251,31 +251,3 @@ test("delete should send proper request", () => {
     expect(passedRequest.queryData).toBeNull();
     passedCallback(null, { ok: true });
 });
-
-test("deleteCollection should send proper request", () => {
-    let passedRequest = {} as MeshyRequest;
-    let passedCallback: any;
-
-    const requestService: IRequestService = {
-        sendRequest: (sentRequest: MeshyRequest, sentCallback: any) => {
-            passedRequest = sentRequest;
-            passedCallback = sentCallback;
-        }
-    }
-    const authId = guid();
-    const service = new MeshesService(authId, requestService);
-    const meshName = guid();
-
-    service.deleteCollection(meshName).then(_ => {
-        expect(true).toBeTruthy();
-    });
-
-    expect(passedRequest.authenticationId).toBe(authId);
-    expect(passedRequest.path).toBe(`meshes/${meshName}`);
-    expect(passedRequest.source).toBe("api");
-    expect(passedRequest.method).toBe("DELETE");
-    expect(passedRequest.type).toBeNull();
-    expect(passedRequest.data).toBeNull();
-    expect(passedRequest.queryData).toBeNull();
-    passedCallback(null, { ok: true });
-});

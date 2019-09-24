@@ -87,14 +87,4 @@ export class MeshesService implements IMeshesService {
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
-  public deleteCollection = (meshName: string) => {
-    return new Promise<void>((resolve, reject) => {
-      const request = new MeshyRequest();
-      request.authenticationId = this.authenticationId;
-      request.path = `meshes/${meshName}`;
-      request.method = RequestService.DELETE;
-
-      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
-    });
-  };
 }
