@@ -131,6 +131,12 @@ export interface IMeshesService {
    * @param id Id of mesh data to update
    */
   delete(meshName: string, id: string): Promise<void>;
+  /**
+   * Delete mesh data that meet filter criteria
+   * @param meshName Name of mesh collection
+   * @param filter Filter to be met for data to be deleted
+   */
+  deleteMany(meshName: string, filter: any): Promise<IDeleteManyResult>;
 }
 
 /**
@@ -151,7 +157,19 @@ export interface IProjectionsService {
     },
   ): Promise<IPageResult<T>>;
 }
-
+/**
+ * Defines result when deleting multiple records
+ */
+export interface IDeleteManyResult {
+  /**
+   * Count of how many items were deleted
+   */
+  deletedCount: number;
+  /**
+   * Identifies if the delete was acknowledged.
+   */
+  isAcknowledged: boolean;
+}
 /**
  * Defines MeshyDB client for authenticated user
  */

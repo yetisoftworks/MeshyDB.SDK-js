@@ -1,4 +1,4 @@
-import { IMeshData, IMeshesService, IPageResult } from '..';
+import { IDeleteManyResult, IMeshData, IMeshesService, IPageResult } from '..';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { IRequestService, RequestService } from './RequestService';
 import { Utils } from './Utils';
@@ -82,6 +82,17 @@ export class MeshesService implements IMeshesService {
       const request = new MeshyRequest();
       request.authenticationId = this.authenticationId;
       request.path = `meshes/${meshName}/${id}`;
+      request.method = RequestService.DELETE;
+
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
+    });
+  };
+  public deleteMany = (meshName: string, filter: any) => {
+    return new Promise<IDeleteManyResult>((resolve, reject) => {
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = `meshes/${meshName}`;
+      request.queryData = { filter };
       request.method = RequestService.DELETE;
 
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
