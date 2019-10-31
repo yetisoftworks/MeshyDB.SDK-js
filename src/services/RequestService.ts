@@ -55,7 +55,12 @@ export class RequestService implements IRequestService {
 
     if (request.queryData) {
       for (const key of Object.keys(request.queryData)) {
-        requestConfig = requestConfig.query(`${key}=${encodeURIComponent(JSON.stringify(request.queryData[key]))}`);
+        let queryData = request.queryData[key];
+        if (typeof queryData !== 'string') {
+          queryData = JSON.stringify(request.queryData[key]);
+        }
+
+        requestConfig = requestConfig.query(`${key}=${encodeURIComponent(queryData)}`);
       }
     }
 

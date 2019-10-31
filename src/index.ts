@@ -151,6 +151,7 @@ export interface IProjectionsService {
   get<T>(
     projectionName: string,
     query?: {
+      filter?: any;
       orderBy?: any;
       page?: number;
       pageSize?: number;
@@ -187,6 +188,10 @@ export interface IMeshyConnection {
    */
   projectionsService: IProjectionsService;
   /**
+   * Service to manage roles
+   */
+  rolesService: IRolesService;
+  /**
    * Retrieve currently authorized user
    */
   currentUser: ICurrentUser | null;
@@ -205,7 +210,92 @@ export interface IMeshyConnection {
    */
   retrieveRefreshToken(): string | null;
 }
-
+/**
+ * Defines service to manage roles
+ */
+export interface IRolesService {
+  /**
+   * Gets role
+   * @param id id of role to retrieve
+   */
+  get(id: string): Promise<IRole>;
+  /**
+   * Gets roles
+   * @param query Query data for searching roles
+   */
+  search(query?: { name?: string; page?: number; pageSize?: number }): Promise<IPageResult<IRole>>;
+  /**
+   * Creates role
+   * @param model Role data to save
+   */
+  create(model: IRole): Promise<IRole>;
+  /**
+   * Updates role
+   * @param id Id of role to update
+   * @param model Role data to update
+   */
+  update(id: string, model: IRole): Promise<IRole>;
+  /**
+   * Deletes role
+   * @param id Id of role to delete
+   */
+  delete(id: string): Promise<void>;
+  /**
+   * Gets permission for role
+   * @param roleId Id of role to scope permissions to retrieve
+   * @param permissionId Id of permission to retrieve
+   */
+  getPermission(roleId: string, permissionId: string): Promise<IPermission>;
+  /**
+   * Gets permissions for a role
+   * @param roleId Id of role to scope permissions to retrieve
+   * @param query Query data for searching role
+   */
+  searchPermission(
+    roleId: string,
+    query?: {
+      permissibleName?: string;
+      page?: number;
+      pageSize?: number;
+    },
+  ): Promise<IPageResult<IPermission>>;
+  /**
+   * Create permission for role
+   * @param roleId Id of role to scope permission to create
+   * @param model Permission data to create
+   */
+  createPermission(roleId: string, model: IPermission): Promise<IPermission>;
+  /**
+   * Update permission for role
+   * @param roleId Id of role to scope permission to update
+   * @param permissionId Id of permission to update
+   * @param model Permission data to update
+   */
+  updatePermission(roleId: string, permissionId: string, model: IPermission): Promise<IPermission>;
+  /**
+   * Delete permission
+   * @param roleId Id of role to scope permission to delete
+   * @param permissionId Id of permission to delete
+   */
+  deletePermission(roleId: string, permissionId: string): Promise<void>;
+  /**
+   * Gets permissibles
+   * @param query Query data for searching permissibles
+   */
+  searchPermissible(query?: { name?: string; page?: number; pageSize?: number }): Promise<IPageResult<IPermissible>>;
+  /**
+   * Add a batch set of users to a role
+   * @param id Id of role to add
+   * @param model Data to add to role
+   */
+  addUsers(id: string, model: IBatchRoleAdd): Promise<void>;
+  /**
+   * Remove a batch set of users to a role
+   * @param id Id of role to remove
+   * @param model Data to add to remove
+   */
+  removeUsers(id: string, model: IBatchRoleRemove): Promise<void>;
+}
 /**
  * Defines service to manage users
  */
@@ -224,6 +314,45 @@ export interface IUsersService {
    * @param questionUpdate Questions to be updated for user
    */
   updateSecurityQuestion(questionUpdate: ISecurityQuestionUpdate): Promise<void>;
+  /**
+   * Gets a user
+   * @param id Id of user to retrieve
+   */
+  get(id: string): Promise<IUser>;
+  /**
+   * Gets users
+   * @param query Query data to search a user
+   */
+  search(query?: {
+    name?: string | undefined;
+    roleId?: string | undefined;
+    orderBy?: any | undefined;
+    activeOnly?: boolean | undefined;
+    page?: number | undefined;
+    pageSize?: number | undefined;
+  }): Promise<IPageResult<IUser>>;
+  /**
+   * Creates a user
+   * @param model User data to create
+   */
+  create(model: INewUser): Promise<IUser>;
+  /**
+   * Updates a user
+   * @param id Id of user to update
+   * @param model User data to update
+   */
+  update(id: string, model: IUser): Promise<IUser>;
+  /**
+   * Delete a user
+   * @param id Id of user to delete
+   */
+  delete(id: string): Promise<void>;
+  /**
+   * Replace a users questions
+   * @param id Id of user to update
+   * @param questionUpdate Question data to update
+   */
+  updateUserSecurityQuestion(id: string, questionUpdate: ISecurityQuestionUpdate): Promise<void>;
 }
 
 /**
@@ -234,6 +363,176 @@ export interface IMeshData {
    * System field representing the id of an item
    */
   _id?: string | undefined;
+}
+/**
+ * Defines User Role Add
+ */
+export interface IUserRoleAdd {
+  /**
+   * Id representing a user
+   */
+  id: string;
+}
+/**
+ * Defines batch operation for users to be added to role
+ */
+export interface IBatchRoleAdd {
+  /**
+   * Collection of users to be added to role
+   */
+  users: IUserRoleAdd[];
+}
+/**
+ * Defines User Role Remove
+ */
+export interface IUserRoleRemove {
+  /**
+   * Id representing a user
+   */
+  id: string;
+}
+/**
+ * Defines batch operation for users to be added to role
+ */
+export interface IBatchRoleRemove {
+  /**
+   * Collection of users to be removed from role
+   */
+  users: IUserRoleRemove[];
+}
+/**
+ * Defines permissible
+ */
+export interface IPermissible {
+  /**
+   * Name of permissible
+   */
+  name: string;
+  /**
+   * Identifies if the permissible can be created
+   */
+  canCreate: boolean;
+  /**
+   * Identifies if the permissible can be updated
+   */
+  canUpdate: boolean;
+  /**
+   * Identifies if the permissible can be read
+   */
+  canRead: boolean;
+  /**
+   * Identifies if the permissible can be deleted
+   */
+  canDelete: boolean;
+}
+/**
+ * Defines a permission
+ */
+export interface IPermission {
+  /**
+   * Id of permission
+   */
+  id: string;
+  /**
+   * Name of permissible
+   */
+  permissibleName: string;
+  /**
+   * Identifies if the role can perform create
+   */
+  create: boolean;
+  /**
+   * Identifies if the role can perform update
+   */
+  update: boolean;
+  /**
+   * Identifies if the role can perform read
+   */
+  read: boolean;
+  /**
+   * Identifies if the role can perform delete
+   */
+  delete: boolean;
+}
+/**
+ * Defines Role
+ */
+export interface IRole {
+  /**
+   * Id representing a role
+   */
+  id: string;
+  /**
+   * Name of the role
+   */
+  name: string;
+  /**
+   * Description of the role
+   */
+  description: string;
+  /**
+   * Number of users currently assigned to the role
+   */
+  numberOfUsers: number;
+}
+/**
+ * Defines User Role
+ */
+export interface IUserRole {
+  /**
+   * Name of the role
+   */
+  name: string;
+  /**
+   * Identifies when the role was added
+   */
+  addedDate: Date;
+}
+
+/**
+ * Defines new user
+ */
+export interface INewUser {
+  /**
+   * Name representing a user
+   */
+  username: string;
+  /**
+   * Optional field for first name
+   */
+  firstName?: string | null | undefined;
+  /**
+   * Optional field for last name
+   */
+  lastName?: string | null | undefined;
+  /**
+   * Optional field for phone number
+   */
+  phoneNumber?: string | null | undefined;
+  /**
+   * Optional field for email address
+   */
+  emailAddress?: string | null | undefined;
+  /**
+   * New password for user
+   */
+  newPassword: string;
+  /**
+   * Collection identifying security questions for user verification
+   */
+  securityQuestions?: ISecurityQuestion[] | null | undefined;
+  /**
+   * Identifies if a user has been verified
+   */
+  verified: boolean;
+  /**
+   * Identifies if a user is considered active
+   */
+  isActive: boolean;
+  /**
+   * Optional field defining a users set of roles
+   */
+  roles?: IUserRole[] | null | undefined;
 }
 
 /**
@@ -271,7 +570,7 @@ export interface IUser {
   /**
    * Optional field defining a users set of roles
    */
-  roles: string[] | undefined;
+  roles: IUserRole[] | undefined;
   /**
    * Collection identifying security questions for user verification
    */
@@ -284,6 +583,10 @@ export interface IUser {
    * Optional field for email address
    */
   emailAddress?: string | null | undefined;
+  /**
+   * Identifies when user last accessed the system
+   */
+  lastAccessed?: Date | null;
 }
 
 /**
@@ -467,4 +770,8 @@ export interface ICurrentUser {
    * Unique identifier of anonymous user, such as a device id
    */
   username: string;
+  /**
+   * User's permissions
+   */
+  permissions: string[];
 }

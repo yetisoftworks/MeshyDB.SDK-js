@@ -1,4 +1,4 @@
-import { ICurrentUser, IMeshesService, IMeshyConnection, IProjectionsService, IUsersService } from '..';
+import { ICurrentUser, IMeshesService, IMeshyConnection, IProjectionsService, IRolesService, IUsersService } from '..';
 import { Constants } from '../models/Constants';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { UserPasswordUpdate } from '../models/UserPasswordUpdate';
@@ -6,6 +6,7 @@ import { MeshesService } from './MeshesService';
 import { MeshyClient } from './MeshyClient';
 import { ProjectionsService } from './ProjectionsService';
 import { RequestService } from './RequestService';
+import { RolesService } from './RolesService';
 import { TokenService } from './TokenService';
 import { UsersService } from './UsersService';
 import { Utils } from './Utils';
@@ -29,6 +30,7 @@ export class MeshyConnection implements IMeshyConnection {
           firstName: parsedToken[this.claimNames.given_name] || '',
           id: parsedToken[this.claimNames.sub] || '',
           lastName: parsedToken[this.claimNames.family_name] || '',
+          permissions: parsedToken[this.claimNames.permission] || [],
           roles: parsedToken[this.claimNames.role] || [],
           username: parsedToken[this.claimNames.id] || '',
         } as ICurrentUser;
@@ -43,6 +45,7 @@ export class MeshyConnection implements IMeshyConnection {
   public usersService: IUsersService;
   public meshesService: IMeshesService;
   public projectionsService: IProjectionsService;
+  public rolesService: IRolesService;
 
   private set authenticationId(value: string) {
     Utils.setStorage('_meshydb_authid_', value);
@@ -59,6 +62,7 @@ export class MeshyConnection implements IMeshyConnection {
     family_name: 'family_name',
     given_name: 'given_name',
     id: 'id',
+    permission: 'permission',
     role: 'role',
     sub: 'sub',
   };
@@ -70,6 +74,7 @@ export class MeshyConnection implements IMeshyConnection {
     this.usersService = new UsersService(authenticationId, this.requestService);
     this.meshesService = new MeshesService(authenticationId, this.requestService);
     this.projectionsService = new ProjectionsService(authenticationId, this.requestService);
+    this.rolesService = new RolesService(authenticationId, this.requestService);
   }
   public updatePassword = (previousPassword: string, newPassword: string) => {
     const updatePassword = new UserPasswordUpdate();
