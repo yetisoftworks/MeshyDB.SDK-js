@@ -29,6 +29,127 @@ export class MeshyClient {
   public static get currentConnection(): IMeshyConnection | null {
     return InternalMeshyClient.currentConnection;
   }
+
+  /**
+   * Gets established client connection for user
+   * @param username Username to log in with
+   * @param password Password of user to log in with
+   */
+  public static login(username: string, password: string): Promise<IMeshyConnection> {
+    if (!InternalMeshyClient.currentClient) {
+      throw new Error('MeshyClient.initialize has not been called.');
+    }
+
+    return InternalMeshyClient.currentClient.login(username, password);
+  }
+
+  /**
+   * Gets established client connection for previously logged in user
+   * @param refreshToken Long living token to request login at a later time
+   */
+  public static loginWithRefresh(refreshToken: string): Promise<IMeshyConnection> {
+    if (!InternalMeshyClient.currentClient) {
+      throw new Error('MeshyClient.initialize has not been called.');
+    }
+
+    return InternalMeshyClient.currentClient.loginWithRefresh(refreshToken);
+  }
+
+  /**
+   * Registers a user within the system
+   * @param user User to create
+   */
+  public static registerUser(user: IRegisterUser): Promise<IUserVerificationHash> {
+    if (!InternalMeshyClient.currentClient) {
+      throw new Error('MeshyClient.initialize has not been called.');
+    }
+
+    return InternalMeshyClient.currentClient.registerUser(user);
+  }
+
+  /**
+   * Registers anonymous user within the system
+   * @param username Username to log in with
+   */
+  public static registerAnonymousUser(username?: string | undefined): Promise<IUser> {
+    if (!InternalMeshyClient.currentClient) {
+      throw new Error('MeshyClient.initialize has not been called.');
+    }
+
+    return InternalMeshyClient.currentClient.registerAnonymousUser(username);
+  }
+
+  /**
+   * Generates request for password recovery
+   * @param username Username to recover password for
+   */
+  public static forgotPassword(username: string, attempt?: number | undefined): Promise<IUserVerificationHash> {
+    if (!InternalMeshyClient.currentClient) {
+      throw new Error('MeshyClient.initialize has not been called.');
+    }
+
+    return InternalMeshyClient.currentClient.forgotPassword(username, attempt);
+  }
+
+  /**
+   * Resets password for user  based on hash  data
+   * @param resetPassword Reset password request to verify user and set new password
+   */
+  public static resetPassword(resetPassword: IResetPassword): Promise<void> {
+    if (!InternalMeshyClient.currentClient) {
+      throw new Error('MeshyClient.initialize has not been called.');
+    }
+
+    return InternalMeshyClient.currentClient.resetPassword(resetPassword);
+  }
+
+  /**
+   * Gets established client connection for anonymous
+   * @param username Optional username to log in with
+   */
+  public static loginAnonymously(username: string): Promise<IMeshyConnection> {
+    if (!InternalMeshyClient.currentClient) {
+      throw new Error('MeshyClient.initialize has not been called.');
+    }
+
+    return InternalMeshyClient.currentClient.loginAnonymously(username);
+  }
+
+  /**
+   * Check hash of request to ensure correctness
+   * @param userVerificationCheck Verification data to check request
+   */
+  public static checkHash(userVerificationCheck: IUserVerificationCheck): Promise<IValid> {
+    if (!InternalMeshyClient.currentClient) {
+      throw new Error('MeshyClient.initialize has not been called.');
+    }
+
+    return InternalMeshyClient.currentClient.checkHash(userVerificationCheck);
+  }
+
+  /**
+   * Verify user to allow access to application
+   * @param userVerificationCheck Verification data to check request
+   */
+  public static verifyUser(userVerificationCheck: IUserVerificationCheck): Promise<void> {
+    if (!InternalMeshyClient.currentClient) {
+      throw new Error('MeshyClient.initialize has not been called.');
+    }
+
+    return InternalMeshyClient.currentClient.verifyUser(userVerificationCheck);
+  }
+
+  /**
+   * Checks if username already exists
+   * @param username Username to check
+   */
+  public static checkUserExist(username: string): Promise<IExist> {
+    if (!InternalMeshyClient.currentClient) {
+      throw new Error('MeshyClient.initialize has not been called.');
+    }
+
+    return InternalMeshyClient.currentClient.checkUserExist(username);
+  }
 }
 
 /**

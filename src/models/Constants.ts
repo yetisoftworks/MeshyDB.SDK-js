@@ -1,6 +1,14 @@
 import { Utils } from '../services/Utils';
 
 export class Constants {
+  public static canRestore() {
+    const accountName = Utils.retrieveStorage<string>(Constants.accountStorageKey);
+    const publicKey = Utils.retrieveStorage<string>(Constants.publicStorageKey);
+    const tenant = Utils.retrieveStorage<string | undefined>(Constants.tenantStorageKey);
+
+    return (accountName || publicKey || '').length > 0;
+  }
+
   public static restore() {
     const accountName = Utils.retrieveStorage<string>(Constants.accountStorageKey);
     const publicKey = Utils.retrieveStorage<string>(Constants.publicStorageKey);

@@ -32,7 +32,23 @@ export class MeshyClient implements IMeshyClient {
     return this._currentConnection;
   }
 
+  public static set currentClient(value) {
+    MeshyClient._currentClient = value;
+  }
+
+  public static get currentClient() {
+    if (!this._currentClient && Constants.canRestore()) {
+      const constants = Constants.restore();
+      const client = new MeshyClient(constants.accountName, constants.publicKey, constants.tenant || '');
+      client.restoreSession();
+      this.currentClient = client;
+    }
+
+    return this._currentClient;
+  }
+
   private static _currentConnection: IMeshyConnection | null;
+  private static _currentClient: IMeshyClient | null;
 
   private constants: Constants;
   private userService: UserService;
