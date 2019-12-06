@@ -189,6 +189,8 @@ export class MeshyClient implements IMeshyClient {
 
   private restoreSession = () => {
     const authId = Utils.retrieveStorage<string>('_meshydb_authid_');
-    MeshyClient.currentConnection = new MeshyConnection(authId || '', this.constants, this.tokenService);
+    if (authId) {
+      MeshyClient.currentConnection = new MeshyConnection(authId || '', this.constants, this.tokenService);
+    }
   };
 }
