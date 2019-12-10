@@ -92,7 +92,7 @@ export class MeshyConnection implements IMeshyConnection {
   };
   public signout = () => {
     MeshyClient.currentConnection = null;
-    Utils.clearStorage();
+    Utils.deleteFromStorage('_meshydb_authid_');
 
     return this.tokenService.signout(this.authenticationId);
   };

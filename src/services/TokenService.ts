@@ -149,6 +149,7 @@ export class TokenService {
     return new Promise<void>((resolve, reject) => {
       const cache = Utils.retrieveStorage<TokenCacheData>(TokenService.storageKey);
       if (!cache) {
+        resolve();
         return;
       }
       const revocation = new TokenRevocation();
