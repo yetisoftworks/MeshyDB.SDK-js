@@ -338,7 +338,7 @@ export interface ICreateManyResult {
   /**
    * Count of how many items were created
    */
-  insertedCount: number;
+  createdCount: number;
 }
 /**
  * Defines MeshyDB client for authenticated user
