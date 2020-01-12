@@ -258,6 +258,19 @@ export interface IMeshesService {
    * @param filter Filter to be met for data to be deleted
    */
   deleteMany(meshName: string, filter: any): Promise<IDeleteManyResult>;
+  /**
+   * Update mesh data that meets filter criteria
+   * @param meshName Name of mesh collection
+   * @param filter Filter to be met for data to be updated
+   * @param update MongoDB update command to update bulk set of data
+   */
+  updateMany(meshName: string, filter: string, update: string): Promise<IUpdateManyResult>;
+  /**
+   * Creates mesh data
+   * @param meshName Name of mesh collection
+   * @param data Collection of data to be created
+   */
+  createMany<T extends IMeshData>(meshName: string, data: T[]): Promise<ICreateManyResult>;
 }
 
 /**
@@ -291,6 +304,41 @@ export interface IDeleteManyResult {
    * Identifies if the delete was acknowledged.
    */
   isAcknowledged: boolean;
+}
+/**
+ * Defines result when updating multiple records
+ */
+export interface IUpdateManyResult {
+  /**
+   * Identifies if the update was acknowledged.
+   */
+  isAcknowledged: boolean;
+  /**
+   * Identifies if the modified count is available.
+   */
+  isModifiedCountAvailable: boolean;
+  /**
+   * Count of how many records were matched with filter.
+   */
+  matchedCount: number;
+  /**
+   * Count of how many records were modified based on the provided filter.
+   */
+  modifiedCount: number;
+  /**
+   * Id of record created based on upsert.
+   */
+
+  upsertedId: any;
+}
+/**
+ * Defines result when creating multiple records
+ */
+export interface ICreateManyResult {
+  /**
+   * Count of how many items were created
+   */
+  insertedCount: number;
 }
 /**
  * Defines MeshyDB client for authenticated user

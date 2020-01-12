@@ -7,6 +7,7 @@ export class RequestService implements IRequestService {
   public static Auth = 'auth';
   public static API = 'api';
   public static GET = 'GET';
+  public static PATCH = 'PATCH';
   public static POST = 'POST';
   public static PUT = 'PUT';
   public static DELETE = 'DELETE';
@@ -86,6 +87,10 @@ export class RequestService implements IRequestService {
 
     if (method === RequestService.DELETE) {
       return superagent.delete(url);
+    }
+
+    if (method === RequestService.PATCH) {
+      return superagent.patch(url);
     }
 
     return superagent.get(url);

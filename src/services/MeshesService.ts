@@ -1,4 +1,4 @@
-import { IDeleteManyResult, IMeshData, IMeshesService, IPageResult } from '..';
+import { ICreateManyResult, IDeleteManyResult, IMeshData, IMeshesService, IPageResult, IUpdateManyResult } from '..';
 import { MeshyRequest } from '../models/MeshyRequest';
 import { IRequestService, RequestService } from './RequestService';
 import { Utils } from './Utils';
@@ -94,6 +94,31 @@ export class MeshesService implements IMeshesService {
       request.path = `meshes/${meshName}`;
       request.queryData = { filter };
       request.method = RequestService.DELETE;
+
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
+    });
+  };
+  public updateMany = (meshName: string, filter: string, update: string): Promise<IUpdateManyResult> => {
+    return new Promise<IUpdateManyResult>((resolve, reject) => {
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = `meshes/${meshName}`;
+      request.method = RequestService.PATCH;
+      request.data = {
+        filter,
+        update,
+      };
+
+      this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
+    });
+  };
+  public createMany = <T extends IMeshData>(meshName: string, data: T[]): Promise<ICreateManyResult> => {
+    return new Promise<ICreateManyResult>((resolve, reject) => {
+      const request = new MeshyRequest();
+      request.authenticationId = this.authenticationId;
+      request.path = `meshes/${meshName}`;
+      request.method = RequestService.POST;
+      request.data = data;
 
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
