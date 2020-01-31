@@ -270,7 +270,7 @@ export interface IMeshesService {
    * @param meshName Name of mesh collection
    * @param data Collection of data to be created
    */
-  createMany<T extends IMeshData>(meshName: string, data: T[]): Promise<ICreateManyResult>;
+  createMany<T extends IMeshData>(meshName: string, data: T[]): Promise<ICreateManyResult<T>>;
 }
 
 /**
@@ -334,11 +334,15 @@ export interface IUpdateManyResult {
 /**
  * Defines result when creating multiple records
  */
-export interface ICreateManyResult {
+export interface ICreateManyResult<T> {
   /**
    * Count of how many items were created
    */
   createdCount: number;
+  /**
+   * Data that was created.
+   */
+  createdData: T[];
 }
 /**
  * Defines MeshyDB client for authenticated user

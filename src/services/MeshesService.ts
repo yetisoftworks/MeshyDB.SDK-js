@@ -112,8 +112,8 @@ export class MeshesService implements IMeshesService {
       this.requestService.sendRequest(request, Utils.configureCallback(resolve, reject));
     });
   };
-  public createMany = <T extends IMeshData>(meshName: string, data: T[]): Promise<ICreateManyResult> => {
-    return new Promise<ICreateManyResult>((resolve, reject) => {
+  public createMany = <T extends IMeshData>(meshName: string, data: T[]): Promise<ICreateManyResult<T>> => {
+    return new Promise<ICreateManyResult<T>>((resolve, reject) => {
       const request = new MeshyRequest();
       request.authenticationId = this.authenticationId;
       request.path = `meshes/${meshName}`;
